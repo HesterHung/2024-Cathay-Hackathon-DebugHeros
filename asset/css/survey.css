@@ -1,0 +1,45 @@
+/* Custom Styles */
+.country-input {
+    border: none;
+    border-bottom: 2px solid black;
+    font-size: 1.5rem;
+    width: 60%;
+    background-color: transparent;
+  }
+  
+  .country-input:focus {
+    outline: none;
+    border-color: black;
+    box-shadow: none;
+  }
+  
+  .next-btn {
+    background-color: #004f46;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    border-radius: 0.25rem;
+  }
+  
+  .next-btn:hover {
+    background-color: #003a33;
+  }
+  
+  .map-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+  }
+  
+  .text-muted {
+    text-decoration: underline;
+    font-size: 1rem;
+  }
+  
+  .text-muted:hover {
+    text-decoration: none;
+    color: #000;
+  }
