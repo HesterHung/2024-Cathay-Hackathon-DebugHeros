@@ -1,0 +1,11 @@
+body {
+    font-family: 'Hedvig Letters Serif', serif;
+  }
+
+.cathay-logo-long{
+    max-height: 60px
+}
+
+.nav-text {
+    float: right;
+}
