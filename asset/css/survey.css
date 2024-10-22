@@ -43,3 +43,10 @@
     text-decoration: none;
     color: #000;
   }
+
+  .invalid-feedback {
+    display: none;
+}
+input:invalid ~ .invalid-feedback {
+    display: block;
+}
