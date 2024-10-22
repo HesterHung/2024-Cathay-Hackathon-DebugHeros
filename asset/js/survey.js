@@ -1,5 +1,7 @@
 //GLOBAL VARIABLE
-let CurrentPage = "departCountries"
+const sets = ["departCountries", "arrivalCountries", 'cities', 'airports']
+let CurrentPage = sets[0]
+
 
 apiLinks = {
     departCountries: 'https://api.example.com/countries',
@@ -57,7 +59,7 @@ function setQuestion(){
     questionTextElement.innerHTML = questionSet[CurrentPage];
 }
 
-const setInvalidFeedback = () => {
+const showInvalidFeedback = () => {
     invalidFeedback.innerHTML = invalidFeedbackSet[CurrentPage];
 }
 
@@ -70,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     createDataList()
     setQuestion()
-    setInvalidFeedback()
+    showInvalidFeedback()
 });
 
 
