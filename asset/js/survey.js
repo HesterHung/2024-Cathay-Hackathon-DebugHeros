@@ -38,7 +38,7 @@ function fetchData(apiKey, dataList) {
         .catch(error => console.error('Error fetching countries:', error));
 }
 
-
+//TEST
 function createDataList() {
     // Example option list
     const optionList = ["Hong Kong", "Japan"];
