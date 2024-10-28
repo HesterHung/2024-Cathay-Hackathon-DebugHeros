@@ -1,8 +1,10 @@
+import { TripTime, Location, planConfig } from "./planConfig";
+
 //GLOBAL VARIABLE
 const sets = ["departCountries", "arrivalCountries", 'cities', 'airports']
 let CurrentPage = sets[0]
 
-
+//ARRAY
 apiLinks = {
     departCountries: 'https://api.example.com/countries',
     arrivalCountries: 'https://api.example.com/countries',
@@ -24,6 +26,7 @@ invalidFeedbackSet = {
     airports: 'Please select a airport from the list.',
 }
 
+//FUNCTION
 function fetchData(apiKey, dataList) {
     fetch(this.apiLinks[apiKey])  // Replace with your actual API endpoint
         .then(response => response.json())
@@ -38,7 +41,6 @@ function fetchData(apiKey, dataList) {
         .catch(error => console.error('Error fetching countries:', error));
 }
 
-//TEST
 function createDataList() {
     // Example option list
     const optionList = ["Hong Kong", "Japan"];
@@ -69,10 +71,17 @@ document.addEventListener('DOMContentLoaded', function () {
     dataListElement = document.getElementById('dataListBox');
     questionTextElement = document.getElementById('questionText');
     invalidFeedback = document.getElementById('invalid-feedback');
-
+    nextBtn = document.getElementById("btn-next");
+    
     createDataList()
     setQuestion()
     showInvalidFeedback()
+
+    nextBtn.onclick = () => {
+        console.log("NEXT!")
+    }
+    
 });
+
 
 
