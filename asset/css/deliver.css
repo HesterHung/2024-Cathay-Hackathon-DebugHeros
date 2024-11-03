@@ -1,0 +1,66 @@
+.container {
+    max-width: 600px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    margin: 40px auto;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.logo {
+    width: 75px; 
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.form-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.form-control {
+    border-color: #ddd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.checkbox-container {
+    margin-bottom: 20px;
+}
+
+.estimated-fee {
+    font-size: 32px;
+    color: #006666;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.btn-request {
+    background-color: #006666;
+    color: white;
+    padding: 10px 40px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 16px;
+}
+
+.btn-request:hover {
+    background-color: #005555;
+    color: white;
+}
