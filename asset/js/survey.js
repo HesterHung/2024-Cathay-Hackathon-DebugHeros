@@ -1,25 +1,32 @@
 import { TripTime, Location, planConfig } from "./planConfig";
 
+//GET ELEMENT
+let inputElement = document.getElementById('inputFormBox');
+let dataListElement = document.getElementById('dataListBox');
+let questionTextElement = document.getElementById('questionText');
+let invalidFeedback = document.getElementById('invalid-feedback');
+let nextBtn = document.getElementById("btn-next");
+
 //GLOBAL VARIABLE
 const sets = ["departCountries", "arrivalCountries", 'cities', 'airports']
 let CurrentPage = sets[0]
 
 //ARRAY
-apiLinks = {
+const apiLinks = {
     departCountries: 'https://api.example.com/countries',
     arrivalCountries: 'https://api.example.com/countries',
     cities: 'https://api.example.com/cities',
     airports: 'https://api.example.com/airlines',
 };
 
-questionSet = {
+const questionSet = {
     departCountries: 'Which country/ region would you depart form?',
     arrivalCountries: 'Which country/ region do you depart form?',
     cities: 'Which city do you wanna travel?',
     airports: 'Which airport do you wanna land on?',
 }
 
-invalidFeedbackSet = {
+const invalidFeedbackSet = {
     departCountries: 'Please select a country/region from the list.',
     arrivalCountries: 'Please select a country/region from the list.',
     cities: 'Please select a city from the list.',
@@ -47,6 +54,7 @@ function createDataList() {
 
     // Clear existing options
     dataListElement.innerHTML = '';
+    
 
     // Populate the datalist with options
     for (let i = 0; i < optionList.length; i++) {
@@ -67,12 +75,6 @@ const showInvalidFeedback = () => {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    inputElement = document.getElementById('inputFormBox');
-    dataListElement = document.getElementById('dataListBox');
-    questionTextElement = document.getElementById('questionText');
-    invalidFeedback = document.getElementById('invalid-feedback');
-    nextBtn = document.getElementById("btn-next");
-    
     createDataList()
     setQuestion()
     showInvalidFeedback()

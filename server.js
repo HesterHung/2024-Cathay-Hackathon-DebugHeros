@@ -1,10 +1,26 @@
-const express = require('express');
-const axios = require('axios');
+import express from 'express';
+import axios from 'axios';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
 const app = express();
 const port = 3000;
 
-// Middleware to serve static files (if needed)
-app.use(express.static('public'));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Serve static files from root directory
+app.use(express.static(__dirname, {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        }
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    },
+    extensions: ['js']
+}));
 
 // Route to fetch items from Django API
 app.get('/api/items', async (req, res) => {
@@ -16,6 +32,11 @@ app.get('/api/items', async (req, res) => {
     }
 });
 
+// Serve the main HTML file
+app.get('/', (req, res) => {
+    res.sendFile(join(__dirname, 'index.html'));
+});
+
 app.listen(port, () => {
-    console.log(`Node.js server running at http://localhost:5500`);
+    console.log(`Node.js server running at http://localhost:${port}`);
 });
