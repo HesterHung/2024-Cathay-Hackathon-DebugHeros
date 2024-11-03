@@ -9,8 +9,8 @@ const port = 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Serve static files from root directory
-app.use(express.static(__dirname, {
+// Serve static files from the asset directory
+app.use(express.static(join(__dirname, 'asset'), {
     setHeaders: (res, path) => {
         if (path.endsWith('.css')) {
             res.setHeader('Content-Type', 'text/css');
@@ -32,9 +32,9 @@ app.get('/api/items', async (req, res) => {
     }
 });
 
-// Serve the main HTML file
+// Serve the main HTML file from the asset directory
 app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, 'index.html'));
+    res.sendFile(join(__dirname, 'asset', 'index.html'));
 });
 
 app.listen(port, () => {

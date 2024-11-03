@@ -55,12 +55,12 @@ const placeholders = {
 };
 
 const imageSources = {
-    departCountries: 'asset/img/img-depart-countries.png',
-    departAirport: 'asset/img/img-depart-airport.png',
-    arrivalCountries: 'asset/img/img-arrival-countries.png',
-    toCity: 'asset/img/img-to-city.png',
-    arrivalAirport: 'asset/img/img-arrival-airport.png',
-    tripTime: 'asset/img/img-trip-time.png'
+    departCountries: 'img/img-depart-countries.png',
+    departAirport: 'img/img-depart-airport.png',
+    arrivalCountries: 'img/img-arrival-countries.png',
+    toCity: 'img/img-to-city.png',
+    arrivalAirport: 'img/img-arrival-airport.png',
+    tripTime: 'img/img-trip-time.png'
 };
 
 
