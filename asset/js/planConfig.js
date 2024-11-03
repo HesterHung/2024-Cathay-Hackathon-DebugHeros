@@ -1,8 +1,8 @@
 //OBJECT CREATION
 class Location {
-    constructor(city, country) {
-        this.city = city;
+    constructor(country, city) {
         this.country = country;
+        this.city = city;
     }
 
     getFullLocation() {
@@ -11,6 +11,18 @@ class Location {
 }
 
 const defaultLocation = new Location("Unknown", "Unknown");
+
+class Airport {
+    constructor(fromAirport, toAirport) {
+        this.fromAirport = fromAirport;
+        this.toAirport = toAirport;
+    }
+
+    getFullAirport() {
+        return `${this.fromAirport}, ${this.toAirport}`;
+    }
+}
+const defaultAirport = new Airport("Unknown", "Unknown");
 
 class TripTime {
     constructor(departureDate, returnDate) {
@@ -33,7 +45,7 @@ const defaultTripTime = new Location("2024-01-01", "2024-01-01");
 const planConfig = {
     userID: "",
     location: defaultLocation,
-    airport: "",
+    airport: defaultAirport,
     tripTime: defaultTripTime,
     dayLength: 0,
     totalBudget: 0,

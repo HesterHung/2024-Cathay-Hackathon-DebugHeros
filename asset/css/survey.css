@@ -25,6 +25,22 @@
   .next-btn:hover {
     background-color: #003a33;
   }
+
+#btn-back {
+  background-color: transparent; 
+  border:2px solid #004f46; 
+  color: #004f46; 
+  padding: 8px 18px; 
+  font-size: 1.25rem; 
+  font-weight: bold; 
+  border-radius: 0.25rem;
+  transition: background-color 0.3s, color 0.3s; 
+}
+
+#btn-back:hover {
+  background-color: #004f46; 
+  color: #ffffff; 
+}
   
   .map-img {
     max-width: 100%;
@@ -46,7 +62,14 @@
 
   .invalid-feedback {
     display: none;
+    color: red;
+    margin-top: 5px;
 }
-input:invalid ~ .invalid-feedback {
+
+.invalid-feedback.show {
     display: block;
+}
+
+.navbar-brand {
+  margin: 0px 10px 0 20px; /* top, right, bottom, left */
 }
