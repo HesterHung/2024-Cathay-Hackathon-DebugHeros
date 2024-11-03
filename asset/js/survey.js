@@ -7,7 +7,8 @@ let questionTextElement = document.getElementById('questionText');
 let invalidFeedback = document.getElementById('invalid-feedback');
 let nextBtn = document.getElementById("btn-next");
 let backBtn = document.getElementById("btn-back");
-let formGroup = document.querySelector('.form-group');
+let formGroup = document.getElementById('form-group');
+let tripTimeGroup = document.getElementById('trip-time-form-group');
 
 //GLOBAL VARIABLE
 const pageSets = ["departCountries", "departAirport", "arrivalCountries", "toCity", "arrivalAirport", "tripTime", "flightClasses", "travelExtra"];
@@ -136,9 +137,16 @@ function hideInvalidFeedback() {
 function setQuestion() {
     currentPage = pageSets[pageIndex];
     questionTextElement.innerHTML = questionSet[currentPage];
-    createDataList(); //TODO: fetchData and create List 
     updateImage();
     updateImportPlaceholder();
+
+    if (currentPage === "tripTime") {
+        tripTimeGroup.style.display = 'block';
+        formGroup.style.display = 'none'
+    } else {
+        tripTimeGroup.style.display = 'none';
+        // TODO: Handle other question types
+    }
 }
 
 function nextQuestion() {
@@ -147,17 +155,8 @@ function nextQuestion() {
     setQuestion();
 }
 
-function setTripTimeForm() {
-    formGroup.innerHTML = `
-        <p class="h5 mb-1">From:</p>
-        <input type="date" class="form-control mb-2" id="startDateInput" placeholder="Start Date" required>
-        <p class="h5 mb-1">To:</p>
-        <input type="date" class="form-control" id="endDateInput" placeholder="End Date" required>
-        <div class="invalid-feedback" id="trip-time-invalid-feedback">
-            Please fill in both start and end dates.
-        </div>
-    `;
-}
+
+
 
 const fillPlanConfig = (inputValue) => {
     switch (currentPage) {
@@ -180,6 +179,7 @@ const fillPlanConfig = (inputValue) => {
 
 //MAIN FLOW
 document.addEventListener('DOMContentLoaded', function () {
+    tripTimeGroup.style.display = 'none';
     createDataList()
     setQuestion()
 
@@ -187,27 +187,26 @@ document.addEventListener('DOMContentLoaded', function () {
         const inputValue = inputElement.value.trim();
         const optionList = createDataList();
 
-        if (["departCountries", "departAirport", "arrivalCountries", "toCity", "arrivalAirport"].includes(currentPage)) {
-            if (inputValue === '') {
-                showInvalidFeedback();
-                console.log('Input is empty!');
-            } else if (isValidInput(inputValue, optionList)) {
-                hideInvalidFeedback();
-                fillPlanConfig(inputValue);
-                nextQuestion();
-            } else {
-                showInvalidFeedback();
-                console.log('Invalid input!');
-            }
-        } else if (currentPage === "tripTime") {
-            setTripTimeForm();
+        if (inputValue === '') {
+            showInvalidFeedback();
+            console.log('Input is empty!');
+        } else if (isValidInput(inputValue, optionList)) {
+            hideInvalidFeedback();
+            fillPlanConfig(inputValue);
+            nextQuestion();
+        } else {
+            showInvalidFeedback();
+            console.log('Invalid input!');
         }
+
 
         console.log("NEXT!");
     };
 
     backBtn.onclick = () => {
         previousQuestion();
+        tripTimeGroup.style.display = 'none';
+        formGroup.style.display = formGroup.style.display === 'none' ? 'block' : 'none';
         console.log("BACK!");
     };
 

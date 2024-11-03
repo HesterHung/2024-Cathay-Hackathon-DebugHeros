@@ -41,12 +41,23 @@
                 <h2 id="questionText"></h2>
 
                 <!-- Input Field -->
-                <div class="form-group">
+                <div class="form-group" id = "form-group">
                     <input type="text" class="form-control" id="inputFormBox" list="dataListBox"
                         placeholder="Type to search or select a country" required />
                     <datalist id="dataListBox"></datalist>
                     <div class="invalid-feedback" id="invalid-feedback"></div>
                 </div>
+
+                <div class="trip-time-form-roupg" id = "trip-time-form-group">
+                    <p class="h5 mb-1">From:</p>
+                    <input type="date" class="form-control mb-2" id="startDateInput" placeholder="Start Date" required>
+                    <p class="h5 mb-1">To:</p>
+                    <input type="date" class="form-control" id="endDateInput" placeholder="End Date" required>
+                    <div class="invalid-feedback" id="trip-time-invalid-feedback">
+                        Please fill in both start and end dates.
+                    </div>
+                </div>
+
 
                 <!-- Button and text link -->
                 <div class="d-flex align-items-center mt-4">
@@ -58,8 +69,7 @@
 
             <!-- Image Section -->
             <div class="col-md-6 text-end">
-                <img src="" alt="Map Image" class="img-fluid rounded-5 shadow map-img"
-                    id="mapImage">
+                <img src="" alt="Map Image" class="img-fluid rounded-5 shadow map-img" id="mapImage">
             </div>
         </div>
 
