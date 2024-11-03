@@ -60,7 +60,7 @@ const imageSources = {
     arrivalCountries: 'img/img-arrival-countries.png',
     toCity: 'img/img-to-city.png',
     arrivalAirport: 'img/img-arrival-airport.png',
-    tripTime: 'img/img-trip-time.png'
+    tripTime: 'img/img-trip-time.png',
 };
 
 
