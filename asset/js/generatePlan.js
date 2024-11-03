@@ -142,13 +142,49 @@ function renderBannerImg() {
     bannerImg.src = '../img/temp-banner-plan.png';
 }
 
-// Initialize the page
-document.addEventListener('DOMContentLoaded', () => {
-    const packageContainer = document.getElementById('packageContainer');
-    packageData.hotels.forEach(hotel => {
-        packageContainer.appendChild(renderHotelPackage(hotel));
+function initializePackageSelector() {
+    const selectedPackage = document.querySelector('.selected-package');
+    const packageOptions = document.querySelector('.package-options');
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+
+    // Show initial selected package (first one)
+    selectedPackage.appendChild(renderHotelPackage(packageData.hotels[0]));
+
+    // Render other options
+    packageData.hotels.slice(1).forEach(hotel => {
+        packageOptions.appendChild(renderHotelPackage(hotel));
     });
 
+    // Toggle dropdown
+    dropdownToggle.addEventListener('click', () => {
+        const isVisible = packageOptions.style.display === 'block';
+        packageOptions.style.display = isVisible ? 'none' : 'block';
+        dropdownToggle.textContent = isVisible ? '▼' : '▲';
+    });
+
+    // Handle option selection
+    packageOptions.addEventListener('click', (e) => {
+        const hotelCard = e.target.closest('.hotel-card');
+        if (hotelCard) {
+            selectedPackage.innerHTML = '';
+            selectedPackage.appendChild(hotelCard.cloneNode(true));
+            packageOptions.style.display = 'none';
+            dropdownToggle.textContent = '▼';
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.package-dropdown')) {
+            packageOptions.style.display = 'none';
+            dropdownToggle.textContent = '▼';
+        }
+    });
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', () => {
+    initializePackageSelector();
     renderItinerary(packageData.itinerary);
     renderFlights(packageData.flights);
     renderBannerImg();
