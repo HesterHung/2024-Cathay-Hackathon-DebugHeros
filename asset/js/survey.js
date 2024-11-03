@@ -83,8 +83,10 @@ function fetchData(apiKey, dataList) {
 function createDataList() {
 
     if (currentPage === "flightClasses") {
-        const optionList = ["First", "Japan"]
+        const optionList = flightClasses.classes.map(cls => cls.name);
+        return optionList;
     }
+    // 
 
     const optionList = ["Hong Kong", "Japan"]; // Example option list
     dataListElement.innerHTML = ''; // Clear existing options
@@ -175,12 +177,10 @@ function nextQuestion() {
 }
 
 
-
-
 const fillPlanConfig = (inputValue) => {
     switch (currentPage) {
         case "departAirport":
-            planConfig.airport.fromAirport = inputValue;
+            planConfig.ticket.departAirport = inputValue;
             break;
         case "arrivalCountries":
             planConfig.location.country = inputValue;
@@ -189,7 +189,13 @@ const fillPlanConfig = (inputValue) => {
             planConfig.location.city = inputValue;
             break;
         case "arrivalAirport":
-            planConfig.airport.toAirport = inputValue;
+            planConfig.ticket.arrivalAirport = inputValue;
+            break;
+        case "flightClasses":
+            planConfig.ticket.classes = inputValue;
+            break;
+        case "packagePlan":
+            planConfig.ticket.packagePlan = inputValue;
             break;
     }
     console.log("input: " + inputValue)
