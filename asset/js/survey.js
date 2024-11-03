@@ -96,8 +96,8 @@ function createDataList() {
 function previousQuestion() {
     if (pageIndex > 0) {
         pageIndex--;
-        setQuestion();
     }
+    setQuestion();
 }
 
 function isValidInput(inputValue, optionList) {
@@ -145,6 +145,7 @@ function setQuestion() {
         formGroup.style.display = 'none'
     } else {
         tripTimeGroup.style.display = 'none';
+        formGroup.style.display = 'block';
         // TODO: Handle other question types
     }
 }
@@ -204,9 +205,9 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     backBtn.onclick = () => {
-        previousQuestion();
         tripTimeGroup.style.display = 'none';
-        formGroup.style.display = formGroup.style.display === 'none' ? 'block' : 'none';
+        formGroup.style.display = 'none';
+        previousQuestion();
         console.log("BACK!");
     };
 
