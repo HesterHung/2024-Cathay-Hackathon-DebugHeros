@@ -41,7 +41,6 @@ const invalidFeedbackSet = {
     arrivalCountries: 'Please select a country/region from the list.',
     toCity: 'Please select a city from the list.',
     arrivalAirport: 'Please select a airport from the list.',
-    tripTime: 'Please fill in both time slot.',
     flightClasses: "Please select both flight classes and package plan.",
     travelExtra: "",
 }
@@ -64,6 +63,8 @@ const imageSources = {
     tripTime: 'asset/img/img-trip-time.png'
 };
 
+
+
 //FUNCTION
 function fetchData(apiKey, dataList) {
     fetch(this.apiLinks[apiKey])  // Replace with your actual API endpoint
@@ -80,6 +81,11 @@ function fetchData(apiKey, dataList) {
 }
 
 function createDataList() {
+
+    if (currentPage === "flightClasses") {
+        const optionList = ["First", "Japan"]
+    }
+
     const optionList = ["Hong Kong", "Japan"]; // Example option list
     dataListElement.innerHTML = ''; // Clear existing options
 
@@ -122,16 +128,25 @@ function updateImportPlaceholder() {
 }
 
 function showInvalidFeedback() {
-    if (invalidFeedbackSet[currentPage]) {
-        invalidFeedback.innerHTML = invalidFeedbackSet[currentPage];
-    } else {
-        invalidFeedback.innerHTML = 'Please Fill in All required field';
-    }
+    const invalidFeedback = document.getElementById('invalid-feedback');
+    invalidFeedback.style.display = 'block';
     invalidFeedback.classList.add('show');
+    if (currentPage === "tripTime") {
+        if (!document.getElementById('startDate').value || !document.getElementById('endDate').value) {
+            invalidFeedback.textContent = 'Please fill in both start and end dates.';
+        } else {
+            invalidFeedback.textContent = invalidFeedbackSet[currentPage] || 'Invalid input';
+        }
+    } else {
+        invalidFeedback.textContent = invalidFeedbackSet[currentPage] || 'Invalid input';
+    }
 }
 
 function hideInvalidFeedback() {
+    const invalidFeedback = document.getElementById('invalid-feedback');
+    invalidFeedback.style.display = 'none';
     invalidFeedback.classList.remove('show');
+    invalidFeedback.textContent = '';
 }
 
 function setQuestion() {
@@ -139,10 +154,12 @@ function setQuestion() {
     questionTextElement.innerHTML = questionSet[currentPage];
     updateImage();
     updateImportPlaceholder();
+    hideInvalidFeedback(); // Reset invalid feedback when changing pages
 
     if (currentPage === "tripTime") {
         tripTimeGroup.style.display = 'block';
-        formGroup.style.display = 'none'
+        formGroup.style.display = 'none';        
+        
     } else {
         tripTimeGroup.style.display = 'none';
         formGroup.style.display = 'block';
@@ -154,6 +171,7 @@ function nextQuestion() {
     pageIndex++;
     currentPage = pageSets[pageIndex]
     setQuestion();
+    console.log("NEXT!");
 }
 
 
@@ -177,6 +195,43 @@ const fillPlanConfig = (inputValue) => {
     console.log("input: " + inputValue)
 }
 
+function validateTripTime() {
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+
+    console.log('Start Date Element:', startDateInput);
+    console.log('End Date Element:', endDateInput);
+
+    if (!startDateInput || !endDateInput) {
+        console.error('Start date or end date input not found!');
+        return false;
+    }
+
+    const startDateValue = startDateInput.value.trim();
+    const endDateValue = endDateInput.value.trim();
+
+    if (startDateValue === '' || endDateValue === '') {
+        showInvalidFeedback();
+        console.log('One or both date inputs are empty!');
+        return false;
+    }
+
+    const startDate = new Date(startDateValue);
+    const endDate = new Date(endDateValue);
+
+    if (startDate >= endDate) {
+        const invalidFeedback = document.getElementById('invalid-feedback');
+        invalidFeedback.style.display = 'block';
+        invalidFeedback.classList.add('show');
+        invalidFeedback.textContent = 'Start date must be before end date.';
+        console.log('Start date is not before end date!');
+        return false;
+    }
+
+    hideInvalidFeedback();
+    planConfig.tripTime = { start: startDate, end: endDate };
+    return true;
+}
 
 //MAIN FLOW
 document.addEventListener('DOMContentLoaded', function () {
@@ -185,23 +240,32 @@ document.addEventListener('DOMContentLoaded', function () {
     setQuestion()
 
     nextBtn.onclick = () => {
+        console.log(currentPage);
+        
+        if (currentPage === "tripTime") {
+            if (validateTripTime()) {
+                nextQuestion();
+            }
+            return;
+        }
+        
         const inputValue = inputElement.value.trim();
         const optionList = createDataList();
-
-        if (inputValue === '') {
-            showInvalidFeedback();
-            console.log('Input is empty!');
-        } else if (isValidInput(inputValue, optionList)) {
-            hideInvalidFeedback();
-            fillPlanConfig(inputValue);
-            nextQuestion();
-        } else {
-            showInvalidFeedback();
-            console.log('Invalid input!');
+    
+        if (["departCountries", "departAirport", "arrivalCountries", "toCity", "arrivalAirport"].includes(currentPage)) {
+            if (inputValue === '') {
+                showInvalidFeedback();
+                console.log('Input is empty!');
+            } else if (isValidInput(inputValue, optionList)) {
+                hideInvalidFeedback();
+                fillPlanConfig(inputValue);
+                setQuestion();
+                nextQuestion();
+            } else {
+                showInvalidFeedback();
+                console.log('Invalid input!');
+            }
         }
-
-
-        console.log("NEXT!");
     };
 
     backBtn.onclick = () => {
