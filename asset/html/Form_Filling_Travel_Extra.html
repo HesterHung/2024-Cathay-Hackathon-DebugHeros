@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cathay Traveler - Travel Extra</title>
+    <link rel="stylesheet" href="Form_Filling_Travel_Extra.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="Cathay_logo.jpeg" width="80px" height="80px">
+            <h1>CATHAY TRAVELER</h1>
+            <div class="nav">
+                <a href="#">Trip Planner</a>
+                <a href="#">My Planner</a>
+            </div>
+        </div>
+
+        <h2>Any Travel extra need for your trip?</h2>
+        <div class="travel-extra">
+            <div class="travel-extra-item_2">
+                <h3><img src="stay-removebg-preview.png" width="30px" height="30px">Stay</h3>
+                <p>Earn up to HK$4 = 1 when booking a hotel stay from over 300,000 property choices with Cathay Holidays.</p>
+            </div>
+            <div class="travel-extra-item">               
+                <h3><img src="package_deliver-removebg-preview.png" width="30px" height="30px">Packages Deliver</h3>
+                <p>Use our airport and in-town self-service facilities for speedier check-in and bag drop.</p>
+            </div>
+            <div class="travel-extra-item_2">
+                <h3><img src="accessibility-removebg-preview.png" width="30px" height="30px">Accessibility</h3>
+                <p>Give yourself more time to decide - secure the price of your flights for 72 hours before you decide to purchase.</p>
+            </div>
+            <div class="travel-extra-item">
+                <h3><img src="Travel_insurance-removebg-preview.png" width="30px" height="30px">Travel insurance</h3>
+                <p>Chubb insurance offers extensive and innovative insurance protection designed to meet your ever-changing needs.</p>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="#" class="back-button">&lt;- Back</a>
+            <a href="#" class="done-button">Done</a>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.travel-extra-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Add your desired functionality here, e.g., navigate to a new page or display more information
+                console.log(`Clicked on: ${item.querySelector('h3').textContent}`);
+            });
+        });
+    </script>
+</body>
+</html>
+
