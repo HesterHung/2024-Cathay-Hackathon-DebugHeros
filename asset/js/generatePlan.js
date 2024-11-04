@@ -76,20 +76,199 @@ function renderHotelPackage(hotel) {
     return packageElement;
 }
 
-function renderItinerary(items) {
-    const container = document.getElementById('itineraryContainer');
-    items.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'activity-item';
-        div.innerHTML = `
-            <div class="d-flex align-items-center">
-                <span class="me-2">—</span>
-                <span>${item.title}</span>
+const updatedPackageData = {
+    ...packageData,
+    itinerary: [
+        { 
+            time: "MORNING",
+            items: [
+                { title: "Check In at xxx Hotel", type: "event" },
+                { title: "Take the subway to Asakusa station", type: "transport" },
+                { title: "Visit Sensoji Temple, one of Tokyo's most famous temples. Explore the Nakamise shopping street leading up to the temple.", type: "event" },
+                { title: "Walk to the Sumida River and board a sightseeing cruise boat. Enjoy views of the city skyline and landmarks along the river.\nBook on: Klook", type: "event" },
+                { title: "Disembark the river cruise and have lunch at one of the restaurants in the Asakusa district.", type: "event" }
+            ]
+        },
+        {
+            time: "AFTERNOON",
+            items: []
+        },
+        {
+            time: "EVENING",
+            items: []
+        }
+    ]
+};
+
+class ItineraryManager {
+    constructor(containerId, data) {
+        this.container = document.getElementById(containerId);
+        this.data = data;
+        this.draggedItem = null;
+        this.render();
+        this.initializeDragAndDrop();
+    }
+
+    render() {
+        this.container.innerHTML = `
+            <div class="itinerary-section">
+                <div class="toggle-group">
+                    <div class="toggle-item active">
+                        <span class="toggle-circle"></span>
+                        <span>Event</span>
+                    </div>
+                    <div class="toggle-item">
+                        <span class="toggle-circle"></span>
+                        <span>Transportation</span>
+                    </div>
+                </div>
+                ${this.data.itinerary.map(section => `
+                    <div class="time-section" data-time="${section.time}">
+                        <div class="time-header">${section.time}</div>
+                        <div class="items-container">
+                            ${section.items.map((item, index) => this.renderItem(item, index)).join('')}
+                        </div>
+                        <div class="custom-event-input">
+                            <button class="add-event-btn">+</button>
+                            <input type="text" placeholder="Enter customized event here">
+                            <button class="location-btn">📍</button>
+                        </div>
+                    </div>
+                `).join('')}
             </div>
         `;
-        container.appendChild(div);
-    });
+
+        this.attachEventListeners();
+    }
+
+    renderItem(item, index) {
+        return `
+            <div class="itinerary-item ${item.type || ''}" 
+                 draggable="true" 
+                 data-index="${index}">
+                <div class="drag-handle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="item-content">${item.title}</div>
+                <div class="action-icon">☰</div>
+            </div>
+        `;
+    }
+
+    initializeDragAndDrop() {
+        const items = this.container.querySelectorAll('.itinerary-item');
+        const containers = this.container.querySelectorAll('.items-container');
+    
+        items.forEach(item => {
+            const dragHandle = item.querySelector('.drag-handle');
+            
+            // Only initiate drag when clicking the drag handle
+            dragHandle.addEventListener('mousedown', () => {
+                item.draggable = true;
+            });
+            
+            item.addEventListener('mouseup', () => {
+                item.draggable = false;
+            });
+    
+            item.addEventListener('dragstart', (e) => {
+                this.draggedItem = item;
+                item.classList.add('dragging');
+            });
+    
+            item.addEventListener('dragend', (e) => {
+                item.classList.remove('dragging');
+                this.draggedItem = null;
+            });
+        });
+    
+        containers.forEach(container => {
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const afterElement = this.getDragAfterElement(container, e.clientY);
+                if (this.draggedItem) {
+                    if (afterElement) {
+                        container.insertBefore(this.draggedItem, afterElement);
+                    } else {
+                        container.appendChild(this.draggedItem);
+                    }
+                }
+            });
+        });
+    }
+
+    getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.itinerary-item:not(.dragging)')];
+
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    attachEventListeners() {
+        // Toggle buttons
+        const toggles = this.container.querySelectorAll('.toggle-item');
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                toggles.forEach(t => t.classList.remove('active'));
+                toggle.classList.add('active');
+            });
+        });
+
+        // Custom event inputs
+        const customEventInputs = this.container.querySelectorAll('.custom-event-input');
+        customEventInputs.forEach(inputContainer => {
+            const input = inputContainer.querySelector('input');
+            const addBtn = inputContainer.querySelector('.add-event-btn');
+            const locationBtn = inputContainer.querySelector('.location-btn');
+            const timeSection = inputContainer.closest('.time-section');
+            const itemsContainer = timeSection.querySelector('.items-container');
+
+            addBtn.addEventListener('click', () => {
+                if (input.value.trim()) {
+                    const newItem = {
+                        title: input.value.trim(),
+                        type: 'event'
+                    };
+                    
+                    const itemElement = document.createElement('div');
+                    itemElement.innerHTML = this.renderItem(newItem, itemsContainer.children.length);
+                    itemsContainer.appendChild(itemElement.firstElementChild);
+                    
+                    input.value = '';
+                    this.initializeDragAndDrop();
+                }
+            });
+
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addBtn.click();
+                }
+            });
+
+            locationBtn.addEventListener('click', () => {
+                // Implement location selection functionality
+                console.log('Location selection clicked');
+            });
+        });
+    }
 }
+
+// Update the initialization
+document.addEventListener('DOMContentLoaded', () => {
+    initializePackageSelector();
+    new ItineraryManager('itineraryContainer', updatedPackageData);
+    renderFlights(packageData.flights);
+    renderBannerImg();
+});
 
 function renderFlights(flights) {
     const container = document.getElementById('flightContainer');
@@ -146,21 +325,33 @@ function initializePackageSelector() {
     const selectedPackage = document.querySelector('.selected-package');
     const packageOptions = document.querySelector('.package-options');
     const dropdownToggle = document.querySelector('.dropdown-toggle');
+    let isOpen = false;
+
+    // Set initial arrow state
+    dropdownToggle.textContent = '▼';
 
     // Show initial selected package (first one)
-    selectedPackage.appendChild(renderHotelPackage(packageData.hotels[0]));
+    if (packageData.hotels.length > 0) {
+        selectedPackage.appendChild(renderHotelPackage(packageData.hotels[0]));
+    }
 
-    // Render other options
-    packageData.hotels.slice(1).forEach(hotel => {
+    // Clear and render options
+    packageOptions.innerHTML = '';
+    packageData.hotels.forEach(hotel => {
         packageOptions.appendChild(renderHotelPackage(hotel));
     });
 
     // Toggle dropdown
-    dropdownToggle.addEventListener('click', () => {
-        const isVisible = packageOptions.style.display === 'block';
-        packageOptions.style.display = isVisible ? 'none' : 'block';
-        dropdownToggle.textContent = isVisible ? '▼' : '▲';
-    });
+    function toggleDropdown(event) {
+        event.stopPropagation();
+        isOpen = !isOpen;
+        packageOptions.style.display = isOpen ? 'block' : 'none';
+        dropdownToggle.textContent = isOpen ? '▲' : '▼';
+    }
+
+    // Add click events
+    dropdownToggle.addEventListener('click', toggleDropdown);
+    selectedPackage.addEventListener('click', toggleDropdown);
 
     // Handle option selection
     packageOptions.addEventListener('click', (e) => {
@@ -168,6 +359,7 @@ function initializePackageSelector() {
         if (hotelCard) {
             selectedPackage.innerHTML = '';
             selectedPackage.appendChild(hotelCard.cloneNode(true));
+            isOpen = false;
             packageOptions.style.display = 'none';
             dropdownToggle.textContent = '▼';
         }
@@ -176,6 +368,7 @@ function initializePackageSelector() {
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.package-dropdown')) {
+            isOpen = false;
             packageOptions.style.display = 'none';
             dropdownToggle.textContent = '▼';
         }
@@ -185,7 +378,7 @@ function initializePackageSelector() {
 // Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
     initializePackageSelector();
-    renderItinerary(packageData.itinerary);
+    new ItineraryManager('itineraryContainer', updatedPackageData);
     renderFlights(packageData.flights);
     renderBannerImg();
 });
