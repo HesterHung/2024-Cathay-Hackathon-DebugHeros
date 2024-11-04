@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet">
+    <link href="css/generatePlan.css" rel="stylesheet">
+    <script type="module" src="js/planConfig.js"></script>
+    <script type="module" src="js/generatePlan.js"></script>
+    <script src="js/laodNavbar.js" type="text/javascript"></script>
+</head>
+
+<body>
+
+    <div id="navbar-placeholder"></div>
+
+    <div class="container-fluid p-0">
+        <div class="position-relative">
+            <img id="banner-img" alt="Tokyo Skyline" class="hero-image" >
+        </div>
+        
+        <div class="container my-4">
+            <h1 class="text-center mb-2" >Immersive Tokyo Trip</h1>
+            <p class="text-center mb-4">(8 days 7 night)</p>
+            
+            <h3 class="mb-4">Best value package we found for you:</h3>
+            
+            <div class="package-dropdown">
+                <div class="selected-package"></div>
+                <div class="dropdown-toggle"></div>
+                <div class="package-options"></div>
+            </div>
+
+            <div class="trip-header">
+                <h1>Trip Planner</h1>
+                <div class="planner-nav">
+                    <div class="days-nav">
+                        <button class="nav-arrow" id="prevDay">&lt;</button>
+                        <div class="day-buttons" id="dayButtonsContainer">
+                            <!-- Day buttons will be generated dynamically -->
+                        </div>
+                        <button class="nav-arrow" id="nextDay">&gt;</button>
+                    </div>
+                    <div class="date-inputs">
+                        <div class="date-field">
+                            <label>FROM</label>
+                            <div class="date-input">
+                                <input type="date" id="startDate">
+                            </div>
+                        </div>
+                        <div class="date-field">
+                            <label>TO</label>
+                            <div class="date-input">
+                                <input type="date" id="endDate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div id="itineraryContainer">
+                        <!-- Itinerary items will be dynamically inserted here -->
+                    </div>
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-secondary" type="button">O</button>
+                        <input type="text" class="form-control" placeholder="search for an event">
+                        <button class="btn btn-outline-secondary" type="button">📍</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="map-container">
+                        <h2 class="text-center">MAP</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5" id="flightContainer">
+                <!-- Flight information will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+</html>
