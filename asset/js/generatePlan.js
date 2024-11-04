@@ -375,9 +375,114 @@ function initializePackageSelector() {
     });
 }
 
+class TripPlanner {
+    constructor() {
+        this.startDateInput = document.getElementById('startDate');
+        this.endDateInput = document.getElementById('endDate');
+        this.dayButtonsContainer = document.getElementById('dayButtonsContainer');
+        this.prevDayBtn = document.getElementById('prevDay');
+        this.nextDayBtn = document.getElementById('nextDay');
+        
+        this.currentDay = 1;
+        this.totalDays = 0;
+
+        this.initializeEventListeners();
+        this.loadSavedDates();
+    }
+
+    initializeEventListeners() {
+        this.startDateInput.addEventListener('change', () => this.handleDateChange());
+        this.endDateInput.addEventListener('change', () => this.handleDateChange());
+        this.prevDayBtn.addEventListener('click', () => this.navigateDay('prev'));
+        this.nextDayBtn.addEventListener('click', () => this.navigateDay('next'));
+    }
+
+    loadSavedDates() {
+        const savedStartDate = localStorage.getItem('tripStartDate');
+        const savedEndDate = localStorage.getItem('tripEndDate');
+        const savedCurrentDay = localStorage.getItem('currentDay');
+
+        if (savedStartDate && savedEndDate) {
+            this.startDateInput.value = savedStartDate;
+            this.endDateInput.value = savedEndDate;
+            this.currentDay = savedCurrentDay ? parseInt(savedCurrentDay) : 1;
+            this.handleDateChange();
+        }
+    }
+
+    handleDateChange() {
+        const startDate = new Date(this.startDateInput.value);
+        const endDate = new Date(this.endDateInput.value);
+
+        if (startDate && endDate && startDate <= endDate) {
+            const diffTime = Math.abs(endDate - startDate);
+            this.totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            
+            localStorage.setItem('tripStartDate', this.startDateInput.value);
+            localStorage.setItem('tripEndDate', this.endDateInput.value);
+            
+            this.generateDayButtons();
+            this.selectDay(this.currentDay);
+        }
+    }
+
+    generateDayButtons() {
+        this.dayButtonsContainer.innerHTML = '';
+        
+        for (let i = 1; i <= this.totalDays; i++) {
+            const button = document.createElement('button');
+            button.className = 'day-btn';
+            button.textContent = `DAY ${i}`;
+            button.addEventListener('click', () => this.selectDay(i));
+            this.dayButtonsContainer.appendChild(button);
+        }
+    }
+
+    selectDay(day) {
+        if (day < 1 || day > this.totalDays) return;
+        
+        this.currentDay = day;
+        localStorage.setItem('currentDay', day);
+        
+        const buttons = this.dayButtonsContainer.querySelectorAll('.day-btn');
+        buttons.forEach((btn, index) => {
+            btn.classList.toggle('active', index + 1 === day);
+        });
+
+        // Center the selected button
+        const activeButton = this.dayButtonsContainer.querySelector('.active');
+        if (activeButton) {
+            activeButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+
+        // Update navigation buttons
+        this.prevDayBtn.disabled = day === 1;
+        this.nextDayBtn.disabled = day === this.totalDays;
+
+        // Load saved data for the selected day
+        this.loadDayData(day);
+    }
+
+    navigateDay(direction) {
+        const newDay = direction === 'prev' ? this.currentDay - 1 : this.currentDay + 1;
+        if (newDay >= 1 && newDay <= this.totalDays) {
+            this.selectDay(newDay);
+        }
+    }
+
+    loadDayData(day) {
+        const savedData = localStorage.getItem(`day${day}Data`);
+        if (savedData) {
+            // Implement your data loading logic here
+            console.log(`Loading data for day ${day}`);
+        }
+    }
+}
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
     initializePackageSelector();
+    const tripPlanner = new TripPlanner();
     new ItineraryManager('itineraryContainer', updatedPackageData);
     renderFlights(packageData.flights);
     renderBannerImg();

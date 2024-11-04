@@ -231,3 +231,191 @@
     padding: 0 10px;
 }
 
+
+.day-nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+    position: relative;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.scroll-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 15px;
+    z-index: 2;
+}
+
+.days-container {
+    overflow: hidden;
+    width: 80%;
+    position: relative;
+}
+
+.days-scroll {
+    display: flex;
+    transition: transform 0.3s ease;
+    gap: 10px;
+}
+
+.day-btn {
+    min-width: 120px;
+    padding: 10px 20px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.day-btn.active {
+    background: black;
+    color: white;
+    border-color: black;
+}
+
+.date-range {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.date-input {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.date-input label {
+    font-size: 14px;
+    color: #666;
+}
+
+.date-picker {
+    padding: 8px 12px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .days-container {
+        width: 70%;
+    }
+    
+    .day-btn {
+        min-width: 100px;
+        padding: 8px 15px;
+    }
+}
+
+
+.trip-header {
+    padding: 20px;
+    text-align: center;
+}
+
+.trip-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.planner-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.days-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-arrow {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.nav-arrow:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.day-buttons {
+    display: flex;
+    gap: 10px;
+    overflow-x: hidden;
+    max-width: 400px;
+    scroll-behavior: smooth;
+}
+
+.day-btn {
+    padding: 8px 20px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    background: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.day-btn.active {
+    background: black;
+    color: white;
+    border-color: black;
+}
+
+.date-inputs {
+    display: flex;
+    gap: 20px;
+}
+
+.date-field {
+    text-align: left;
+}
+
+.date-field label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.date-input {
+    display: flex;
+    align-items: center;
+}
+
+.date-input input[type="date"] {
+    padding: 8px 12px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+}
+
+@media (max-width: 768px) {
+    .planner-nav {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .date-inputs {
+        width: 100%;
+        justify-content: center;
+    }
+}
