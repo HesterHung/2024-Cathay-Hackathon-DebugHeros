@@ -11,6 +11,7 @@
     <link href="css/survey.css" rel="stylesheet">
     <link href="css/common.css" rel="stylesheet">
     <script type="module" src="js/survey.js"></script>
+    <script type="module" src="js/flightClass.js"></script>
     <script type="module" src="js/planConfig.js"></script>
     <script src="js/laodNavbar.js" type="text/javascript"></script>
 </head>
@@ -20,19 +21,17 @@
     <div id="navbar-placeholder"></div>
 
     <div class="container">
-
-
         <h2>Which flight classes would you want?</h2>
 
         <div class="class-tabs">
-            <div class="class-tab" onclick="selectClass('First')">First</div>
-            <div class="class-tab" onclick="selectClass('Business')">Business</div>
-            <div class="class-tab" onclick="selectClass('Premium Economy')">Premium Economy</div>
-            <div class="class-tab" onclick="selectClass('Economic')">Economic</div>
+            <div class="class-tab" data-class="First">First</div>
+            <div class="class-tab" data-class="Business">Business</div>
+            <div class="class-tab" data-class="Premium Economy">Premium Economy</div>
+            <div class="class-tab" data-class="Economic">Economic</div>
         </div>
 
         <div class="fare-options">
-            <div class="fare-option">
+            <div class="fare-option" data-fare="Light">
                 <div class="fare-icon">🎒</div>
                 <div class="fare-title">Light</div>
                 <div class="fare-description">
@@ -41,7 +40,7 @@
                 </div>
             </div>
 
-            <div class="fare-option" onclick="selectFare('Essential')">
+            <div class="fare-option" data-fare="Essential">
                 <div class="fare-icon">🎒</div>
                 <div class="fare-title">Essential</div>
                 <div class="fare-description">
@@ -50,7 +49,7 @@
                 </div>
             </div>
 
-            <div class="fare-option" onclick="selectFare('Flex')">
+            <div class="fare-option" data-fare="Flex">
                 <div class="fare-icon">✈️</div>
                 <div class="fare-title">Flex</div>
                 <div class="fare-description">
@@ -60,17 +59,12 @@
             </div>
         </div>
 
-        <div id="invalid-feedback"></div>
+        <div id="invalid-feedback" style="color: red; display: none;"></div>
 
         <div class="navigation">
             <a href="#" class="back-button">← Back</a>
             <div class="everything-fine">Everything will be fine</div>
         </div>
-
-        <script>
-                  // Define these variables in the global scope
-
-        </script>
     </div>
 
 

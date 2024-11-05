@@ -123,3 +123,8 @@ h2 {
     margin-top: 10px;
     display: none;
 }
+
+.class-tab.active, .fare-option.active {
+    background-color: #1C3A34;
+    color: white;
+}
