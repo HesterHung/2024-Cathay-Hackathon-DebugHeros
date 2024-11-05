@@ -247,19 +247,6 @@ function validateTripTime() {
 
 //MAIN FLOW
 document.addEventListener('DOMContentLoaded', function () {
-    const storedPageIndex = localStorage.getItem('surveyPageIndex');
-    if (storedPageIndex) {
-        pageIndex = parseInt(storedPageIndex);
-        localStorage.removeItem('surveyPageIndex'); // Clear it after using
-    }
-
-    // Retrieve stored planConfig if it exists
-    const storedPlanConfig = localStorage.getItem('planConfig');
-    if (storedPlanConfig) {
-        Object.assign(planConfig, JSON.parse(storedPlanConfig));
-        localStorage.removeItem('planConfig'); // Clear it after using
-    }
-
     tripTimeGroup.style.display = 'none';
     createDataList();
     setQuestion();

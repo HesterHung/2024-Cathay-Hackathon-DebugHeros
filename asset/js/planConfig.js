@@ -77,40 +77,44 @@ const planConfig = {
             ticket: this.ticket,
             totalBudget: this.totalBudget,
         });
+    },
+
+    // Debug logging method
+    debugLog(indent = 0) {
+        const spacing = ' '.repeat(indent);
+        
+        const logObject = (obj, currentIndent) => {
+            const currentSpacing = ' '.repeat(currentIndent);
+            
+            for (let key in obj) {
+                if (obj[key] === null) {
+                    console.log(`${currentSpacing}${key}: null`);
+                }
+                else if (obj[key] === undefined) {
+                    console.log(`${currentSpacing}${key}: undefined`);
+                }
+                else if (Array.isArray(obj[key])) {
+                    console.log(`${currentSpacing}${key}: [${obj[key]}]`);
+                }
+                else if (typeof obj[key] === 'object' && obj[key] instanceof Date) {
+                    console.log(`${currentSpacing}${key}: ${obj[key].toISOString()}`);
+                }
+                else if (typeof obj[key] === 'object') {
+                    console.log(`${currentSpacing}${key}:`);
+                    logObject(obj[key], currentIndent + 2);
+                }
+                else if (typeof obj[key] === 'function') {
+                    console.log(`${currentSpacing}${key}: [Function]`);
+                }
+                else {
+                    console.log(`${currentSpacing}${key}: ${obj[key]}`);
+                }
+            }
+        };
+
+        console.log('=== Plan Configuration Debug Log ===');
+        logObject(this, indent);
     }
 }
-
-function debugLog(obj, indent = 0) {
-    const spacing = ' '.repeat(indent);
-    
-    for (let key in obj) {
-        if (obj[key] === null) {
-            console.log(`${spacing}${key}: null`);
-        }
-        else if (obj[key] === undefined) {
-            console.log(`${spacing}${key}: undefined`);
-        }
-        else if (Array.isArray(obj[key])) {
-            console.log(`${spacing}${key}: [${obj[key]}]`);
-        }
-        else if (typeof obj[key] === 'object' && obj[key] instanceof Date) {
-            console.log(`${spacing}${key}: ${obj[key].toISOString()}`);
-        }
-        else if (typeof obj[key] === 'object') {
-            console.log(`${spacing}${key}:`);
-            debugLog(obj[key], indent + 2);
-        }
-        else if (typeof obj[key] === 'function') {
-            console.log(`${spacing}${key}: [Function]`);
-        }
-        else {
-            console.log(`${spacing}${key}: ${obj[key]}`);
-        }
-    }
-}
-
-// Usage example:
-console.log('=== Plan Configuration Debug Log ===');
-debugLog(planConfig);
 
 export { Location, TripTime, Ticket, planConfig }
