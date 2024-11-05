@@ -167,10 +167,10 @@ function setQuestion() {
         formGroup.style.display = 'block';
     }
     if (currentPage === "flightClasses") {
-        window.location.href = 'formFillingClasses.html'
+        window.location.href = './formFillingClasses.html'
     }
     if (currentPage === "travelExtra") {
-        window.location.href = 'formFillingConfirmation.html'
+        window.location.href = './FormFillingConfirmation.html'
     }
 
 }
@@ -245,7 +245,6 @@ function validateTripTime() {
     return true;
 }
 
-
 //MAIN FLOW
 document.addEventListener('DOMContentLoaded', function () {
     tripTimeGroup.style.display = 'none';
@@ -291,5 +290,70 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+let selectedClass = null;
+let selectedFare = null;
 
+document.addEventListener('DOMContentLoaded', function () {
+    // Add click handlers for class tabs
+    document.querySelectorAll('.class-tab').forEach(tab => {
+        tab.addEventListener('click', function () {
+            selectedClass = this.getAttribute('data-class');
+
+            // Update visual selection
+            document.querySelectorAll('.class-tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            this.classList.add('active');
+
+            checkSelections();
+        });
+    });
+
+    // Add click handlers for fare options
+    document.querySelectorAll('.fare-option').forEach(option => {
+        option.addEventListener('click', function () {
+            selectedFare = this.getAttribute('data-fare');
+
+            // Update visual selection
+            document.querySelectorAll('.fare-option').forEach(o => {
+                o.classList.remove('active');
+            });
+            this.classList.add('active');
+
+            checkSelections();
+        });
+    });
+});
+
+function checkSelections() {
+    const invalidFeedback = document.getElementById('invalid-feedback');
+
+    if (selectedClass && selectedFare) {
+        // Save to planConfig
+        if (typeof planConfig === 'undefined') {
+            window.planConfig = {};
+        }
+        if (!planConfig.ticket) {
+            planConfig.ticket = {};
+        }
+        planConfig.ticket.classes = selectedClass;
+        planConfig.ticket.packagePlan = selectedFare;
+
+        // Hide any error message
+        invalidFeedback.style.display = 'none';
+
+        // Log the selection
+        console.log('Selected class:', selectedClass);
+        console.log('Selected fare:', selectedFare);
+        console.log('Updated planConfig:', planConfig);
+
+        // Proceed to next page
+        setTimeout(() => {
+            window.location.href = 'travelExtra.html';
+        }, 500);
+    } else {
+        invalidFeedback.style.display = 'block';
+        invalidFeedback.textContent = 'Please select both a flight class and a fare option.';
+    }
+}
 

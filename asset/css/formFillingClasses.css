@@ -10,63 +10,60 @@ body {
     padding: 20px;
 }
 
-.header {
+.nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.logo {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 20px;
-    margin-bottom: 40px;
 }
 
-.header img {
-    width: 60px;
-    height: auto;
+.logo img {
+    height: 30px;
 }
 
-.header h1 {
-    margin-left: 10px;
-    font-size: 24px;
+.nav-links {
+    display: flex;
+    gap: 20px;
 }
 
-.nav {
-    margin-left: auto;
-}
-
-.nav a {
+.nav-links a {
     text-decoration: none;
-    color: black;
-    margin-left: 20px;
-    font-size: 18px;
+    color: #000;
+    font-size: 16px;
 }
 
 h2 {
-    font-size: 32px;
-    margin-bottom: 30px;
+    font-size: 28px;
+    margin: 40px 0;
 }
 
 .class-tabs {
     display: flex;
-    border: 1px solid #ccc;
+    border: 1px solid #e0e0e0;
     margin-bottom: 30px;
 }
 
 .class-tab {
     flex: 1;
-    padding: 15px;
+    padding: 15px 0;
     text-align: center;
     cursor: pointer;
-    border-right: 1px solid #ccc;
-    transition: background-color 0.3s, color 0.3s;
+    transition: all 0.3s ease;
 }
 
-.class-tab:hover {
+.class-tab:not(:last-child) {
+    border-right: 1px solid #e0e0e0;
+}
+
+.class-tab.active {
     background-color: #1C3A34;
     color: white;
-}
-
-.class-tab:last-child {
-    border-right: none;
-    /* Removed the default green background */
 }
 
 .fare-options {
@@ -77,26 +74,26 @@ h2 {
 
 .fare-option {
     flex: 1;
-    border: 1px solid #ccc;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
 }
 
-.fare-option:hover {
+.fare-option.active {
     background-color: #1C3A34;
     color: white;
 }
 
 .fare-icon {
-    font-size: 24px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .fare-title {
-    font-size: 20px;
-    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
 }
 
 .fare-description {
@@ -104,16 +101,25 @@ h2 {
     line-height: 1.5;
 }
 
-.back-button {
-    text-decoration: none;
-    color: black;
-    font-size: 24px;
-    display: inline-block;
-    margin-top: 20px;
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
 }
 
-.footer-text {
-    float: right;
+.back-button {
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+}
+
+.everything-fine {
     text-decoration: underline;
-    margin-top: 20px;
+}
+
+#invalid-feedback {
+    color: red;
+    margin-top: 10px;
+    display: none;
 }

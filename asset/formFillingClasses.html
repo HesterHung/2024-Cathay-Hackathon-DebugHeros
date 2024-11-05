@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,54 +14,66 @@
     <script type="module" src="js/planConfig.js"></script>
     <script src="js/laodNavbar.js" type="text/javascript"></script>
 </head>
+
 <body>
+
+    <div id="navbar-placeholder"></div>
+
     <div class="container">
-        <div class="header">
-            <img src="Cathay_logo.jpeg" alt="Cathay Logo">
-            <h1>CATHAY TRAVELER</h1>
-            <div class="nav">
-                <a href="#">Trip Planner</a>
-                <a href="#">My Planner</a>
-            </div>
-        </div>
-        
+
+
         <h2>Which flight classes would you want?</h2>
-        
+
         <div class="class-tabs">
-            <div class="class-tab" onclick="selectClass('first')">First</div>
-            <div class="class-tab" onclick="selectClass('business')">Business</div>
-            <div class="class-tab" onclick="selectClass('premium')">Premium Economy</div>
-            <div class="class-tab" onclick="selectClass('economic')">Economic</div>
+            <div class="class-tab" onclick="selectClass('First')">First</div>
+            <div class="class-tab" onclick="selectClass('Business')">Business</div>
+            <div class="class-tab" onclick="selectClass('Premium Economy')">Premium Economy</div>
+            <div class="class-tab" onclick="selectClass('Economic')">Economic</div>
         </div>
 
         <div class="fare-options">
-            <div class="fare-option" onclick="selectFare('light')">
+            <div class="fare-option">
                 <div class="fare-icon">🎒</div>
                 <div class="fare-title">Light</div>
                 <div class="fare-description">
-                    Jetting off for a weekend getaway or happy to just simply pack less? Book great value fares that give you the freedom and ease to travel light.
+                    Jetting off for a weekend getaway or happy to just simply pack less? Book great value fares that
+                    give you the freedom and ease to travel light.
                 </div>
             </div>
 
-            <div class="fare-option" onclick="selectFare('essential')">
+            <div class="fare-option" onclick="selectFare('Essential')">
                 <div class="fare-icon">🎒</div>
                 <div class="fare-title">Essential</div>
                 <div class="fare-description">
-                    If you're travelling with family or heading off on a longer trip, our essential fares offer extra baggage and seat pre-selection: the perfect balance of comfort and value.
+                    If you're travelling with family or heading off on a longer trip, our essential fares offer extra
+                    baggage and seat pre-selection: the perfect balance of comfort and value.
                 </div>
             </div>
 
-            <div class="fare-option" onclick="selectFare('flex')">
+            <div class="fare-option" onclick="selectFare('Flex')">
                 <div class="fare-icon">✈️</div>
                 <div class="fare-title">Flex</div>
                 <div class="fare-description">
-                    Give yourself complete flexibility for your next business trip or holiday, with full control over your travel plans for maximum convenience and protection.
+                    Give yourself complete flexibility for your next business trip or holiday, with full control over
+                    your travel plans for maximum convenience and protection.
                 </div>
             </div>
         </div>
 
-        <a href="#" class="back-button">← Back</a>
-        <div class="footer-text">Everything will be fine</div>
+        <div id="invalid-feedback"></div>
+
+        <div class="navigation">
+            <a href="#" class="back-button">← Back</a>
+            <div class="everything-fine">Everything will be fine</div>
+        </div>
+
+        <script>
+                  // Define these variables in the global scope
+
+        </script>
     </div>
+
+
 </body>
+
 </html>
