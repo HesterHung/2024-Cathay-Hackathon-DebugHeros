@@ -160,13 +160,19 @@ function setQuestion() {
 
     if (currentPage === "tripTime") {
         tripTimeGroup.style.display = 'block';
-        formGroup.style.display = 'none';        
-        
+        formGroup.style.display = 'none';
+
     } else {
         tripTimeGroup.style.display = 'none';
         formGroup.style.display = 'block';
-        // TODO: Handle other question types
     }
+    if (currentPage === "flightClasses") {
+        window.location.href = 'formFillingClasses.html'
+    }
+    if (currentPage === "travelExtra") {
+        window.location.href = 'formFillingConfirmation.html'
+    }
+
 }
 
 function nextQuestion() {
@@ -239,6 +245,7 @@ function validateTripTime() {
     return true;
 }
 
+
 //MAIN FLOW
 document.addEventListener('DOMContentLoaded', function () {
     tripTimeGroup.style.display = 'none';
@@ -247,17 +254,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     nextBtn.onclick = () => {
         console.log(currentPage);
-        
+
         if (currentPage === "tripTime") {
             if (validateTripTime()) {
                 nextQuestion();
             }
             return;
         }
-        
+
         const inputValue = inputElement.value.trim();
         const optionList = createDataList();
-    
+
         if (["departCountries", "departAirport", "arrivalCountries", "toCity", "arrivalAirport"].includes(currentPage)) {
             if (inputValue === '') {
                 showInvalidFeedback();
@@ -280,6 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
         previousQuestion();
         console.log("BACK!");
     };
+
 
 });
 
