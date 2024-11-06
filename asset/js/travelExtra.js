@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         planConfig.ticket.travelExtras = Array.from(selectedOptions);
         console.log('Selected options added to ticket:', planConfig.ticket.travelExtras);
         
-        planConfig.debugLog()
+        console.log('Current planConfig', planConfig);
         // You can add navigation logic here
         // window.location.href = 'next-page.html';
     });

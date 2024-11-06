@@ -184,65 +184,83 @@ function nextQuestion() {
 
 
 const fillPlanConfig = (inputValue) => {
-    switch (currentPage) {
-        case "departAirport":
-            planConfig.ticket.departAirport = inputValue;
-            break;
-        case "arrivalCountries":
-            planConfig.location.country = inputValue;
-            break;
-        case "toCity":
-            planConfig.location.city = inputValue;
-            break;
-        case "arrivalAirport":
-            planConfig.ticket.arrivalAirport = inputValue;
-            break;
-        case "flightClasses":
-            planConfig.ticket.classes = inputValue;
-            break;
-        case "packagePlan":
-            planConfig.ticket.packagePlan = inputValue;
-            break;
+    try {
+        switch (currentPage) {
+            case "departCountries":
+                planConfig.location.departCountry = inputValue;
+                break;
+            case "departAirport":
+                planConfig.ticket.departAirport = inputValue;
+                break;
+            case "arrivalCountries":
+                planConfig.location.country = inputValue;
+                break;
+            case "toCity":
+                planConfig.location.city = inputValue;
+                break;
+            case "arrivalAirport":
+                planConfig.ticket.arrivalAirport = inputValue;
+                break;
+            case "flightClasses":
+                planConfig.ticket.classes = inputValue;
+                break;
+            default:
+                console.warn('Unknown page type:', currentPage);
+        }
+        
+        // Save after each update
+        planConfig.save();
+        
+        console.log(`Set ${currentPage} to:`, inputValue);
+        console.log('Current planConfig:', planConfig);
+    } catch (error) {
+        console.error('Error in fillPlanConfig:', error);
     }
-    console.log("input: " + inputValue)
 }
 
 function validateTripTime() {
     const startDateInput = document.getElementById('startDate');
     const endDateInput = document.getElementById('endDate');
 
-    console.log('Start Date Element:', startDateInput);
-    console.log('End Date Element:', endDateInput);
-
     if (!startDateInput || !endDateInput) {
-        console.error('Start date or end date input not found!');
+        console.error('Date inputs not found');
         return false;
     }
 
     const startDateValue = startDateInput.value.trim();
     const endDateValue = endDateInput.value.trim();
 
-    if (startDateValue === '' || endDateValue === '') {
+    if (!startDateValue || !endDateValue) {
         showInvalidFeedback();
-        console.log('One or both date inputs are empty!');
         return false;
     }
 
-    const startDate = new Date(startDateValue);
-    const endDate = new Date(endDateValue);
+    try {
+        const startDate = new Date(startDateValue);
+        const endDate = new Date(endDateValue);
 
-    if (startDate >= endDate) {
-        const invalidFeedback = document.getElementById('invalid-feedback');
-        invalidFeedback.style.display = 'block';
-        invalidFeedback.classList.add('show');
-        invalidFeedback.textContent = 'Start date must be before end date.';
-        console.log('Start date is not before end date!');
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            showInvalidFeedback('Invalid date format');
+            return false;
+        }
+
+        if (startDate >= endDate) {
+            showInvalidFeedback('Start date must be before end date');
+            return false;
+        }
+
+        // Update planConfig
+        planConfig.tripTime = new TripTime(startDate, endDate);
+        planConfig.dayLength = planConfig.tripTime.getDayLength();
+        planConfig.save();
+
+        hideInvalidFeedback();
+        return true;
+    } catch (e) {
+        console.error('Error in validateTripTime:', e);
+        showInvalidFeedback('Invalid date format');
         return false;
     }
-
-    hideInvalidFeedback();
-    planConfig.tripTime = { start: startDate, end: endDate };
-    return true;
 }
 
 //MAIN FLOW
@@ -290,3 +308,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Reset planConfig when index.html loads
+    if (window.location.pathname.endsWith('index.html')) {
+        planConfig.reset();
+    }
+});

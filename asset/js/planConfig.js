@@ -1,4 +1,4 @@
-//OBJECT CREATION
+// Class definitions
 class Location {
     constructor(country, city) {
         this.country = country;
@@ -11,20 +11,23 @@ class Location {
 }
 
 class TripTime {
-    constructor(departureDate, returnDate) {
-        this.departureDate = departureDate;
-        this.returnDate = returnDate;
+    constructor(startDate, returnDate) {
+        // Convert string dates to Date objects if needed
+        this.startDate = startDate instanceof Date ? startDate : new Date(startDate);
+        this.returnDate = returnDate instanceof Date ? returnDate : new Date(returnDate);
     }
 
     getTripTime() {
-        return `${this.departureDate}, ${this.returnDate}`;
+        return `${this.startDate}, ${this.returnDate}`;
     }
+    
     getDayLength() {
-        const timeDiff = this.returnDate - this.departureDate;
+        const timeDiff = this.returnDate.getTime() - this.startDate.getTime();
         const dayLength = timeDiff / (1000 * 3600 * 24);
         return dayLength;
     }
 }
+
 
 class Ticket {
     constructor() {
@@ -52,69 +55,78 @@ class Ticket {
     }
 }
 
-const defaultLocation = new Location("Unknown", "Unknown");
-const defaultTripTime = new TripTime("2024-01-01", "2024-01-01");
-const defaultTicket = new Ticket();
-
-const planConfig = {
-    userID: "",
-    location: defaultLocation,
-    tripTime: defaultTripTime,
-    ticket: defaultTicket,
-    dayLength: 0,
-    totalBudget: 0,
-
-    // Method to export properties to JSON
-    toJSON() {
-        return JSON.stringify({
-            userID: this.userID,
-            location: this.location,
-            tripTime: {
-                departureDate: this.tripTime.departureDate,
-                returnDate: this.tripTime.returnDate,
-                dayLength: this.tripTime.getDayLength(),
-            },
-            ticket: this.ticket,
-            totalBudget: this.totalBudget,
-        });
-    },
-
-    // Debug logging method
-    debugLog(indent = 0) {
-        const spacing = ' '.repeat(indent);
-        
-        const logObject = (obj, currentIndent) => {
-            const currentSpacing = ' '.repeat(currentIndent);
-            
-            for (let key in obj) {
-                if (obj[key] === null) {
-                    console.log(`${currentSpacing}${key}: null`);
-                }
-                else if (obj[key] === undefined) {
-                    console.log(`${currentSpacing}${key}: undefined`);
-                }
-                else if (Array.isArray(obj[key])) {
-                    console.log(`${currentSpacing}${key}: [${obj[key]}]`);
-                }
-                else if (typeof obj[key] === 'object' && obj[key] instanceof Date) {
-                    console.log(`${currentSpacing}${key}: ${obj[key].toISOString()}`);
-                }
-                else if (typeof obj[key] === 'object') {
-                    console.log(`${currentSpacing}${key}:`);
-                    logObject(obj[key], currentIndent + 2);
-                }
-                else if (typeof obj[key] === 'function') {
-                    console.log(`${currentSpacing}${key}: [Function]`);
-                }
-                else {
-                    console.log(`${currentSpacing}${key}: ${obj[key]}`);
-                }
+class PlanConfig {
+    constructor() {
+        try {
+            const savedConfig = localStorage.getItem('planConfig');
+            if (savedConfig) {
+                const parsed = JSON.parse(savedConfig);
+                this.userID = parsed.userID || "";
+                this.location = new Location(parsed.location?.country || "Unknown", parsed.location?.city || "Unknown");
+                this.tripTime = new TripTime(
+                    parsed.tripTime?.startDate,
+                    parsed.tripTime?.returnDate
+                );
+                this.ticket = Object.assign(new Ticket(), parsed.ticket);
+                this.dayLength = this.tripTime.getDayLength();
+                this.totalBudget = parsed.totalBudget || 0;
+            } else {
+                this.initializeDefaults();
             }
-        };
+        } catch (e) {
+            console.error('Error initializing PlanConfig:', e);
+            this.initializeDefaults();
+        }
+    }
 
-        console.log('=== Plan Configuration Debug Log ===');
-        logObject(this, indent);
+    initializeDefaults() {
+        this.userID = "";
+        this.location = new Location("Unknown", "Unknown");
+        this.tripTime = new TripTime(new Date(), new Date());
+        this.ticket = new Ticket();
+        this.dayLength = 0;
+        this.totalBudget = 0;
+    }
+
+    save() {
+        try {
+            const configData = {
+                userID: this.userID,
+                location: this.location,
+                tripTime: {
+                    startDate: this.tripTime?.startDate instanceof Date ? 
+                        this.tripTime.startDate.toISOString() : 
+                        new Date().toISOString(),
+                    returnDate: this.tripTime?.returnDate instanceof Date ? 
+                        this.tripTime.returnDate.toISOString() : 
+                        new Date().toISOString()
+                },
+                ticket: this.ticket,
+                dayLength: this.tripTime?.getDayLength() || 0,
+                totalBudget: this.totalBudget
+            };
+            localStorage.setItem('planConfig', JSON.stringify(configData));
+        } catch (e) {
+            console.error('Error saving PlanConfig:', e);
+        }
+    }
+
+
+    reset() {
+        localStorage.removeItem('planConfig');
+        this.userID = "";
+        this.location = new Location("Unknown", "Unknown");
+        this.tripTime = new TripTime(new Date(), new Date());
+        this.ticket = new Ticket();
+        this.dayLength = 0;
+        this.totalBudget = 0;
     }
 }
 
-export { Location, TripTime, Ticket, planConfig }
+// Create singleton instance
+const planConfig = new PlanConfig();
+
+// Make it globally available
+window.planConfig = planConfig;
+
+export { Location, TripTime, Ticket, planConfig };

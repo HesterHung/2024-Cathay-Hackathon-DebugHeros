@@ -75,10 +75,9 @@ function checkSelections() {
         const currentIndex = parseInt(localStorage.getItem('surveyPageIndex'));
         localStorage.setItem('surveyPageIndex', (currentIndex + 1).toString());
 
-        planConfig.debugLog();
         // Proceed to next page
         setTimeout(() => {
-            
+            console.log('Current planConfig', planConfig);
             window.location.href = './formFillingTravelExtra.html';
             
         }, 500);
