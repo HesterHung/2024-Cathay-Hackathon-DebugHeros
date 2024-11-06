@@ -79,7 +79,7 @@ function checkSelections() {
         // Proceed to next page
         setTimeout(() => {
             
-            window.location.href = './dummy.html';
+            window.location.href = './formFillingTravelExtra.html';
             
         }, 500);
     } else {
