@@ -110,18 +110,20 @@ class PlanConfig {
     }
 
     // Add a new ticket for outbound journey
-    addOutboundTicket(departAirport, arrivalAirport, isDomestic = false) {
+    addOutboundTicket(departAirport, arrivalAirport, flightNumber, isDomestic = false) {
         const ticket = new Ticket('departure');
         ticket.setFlightDetails(departAirport, arrivalAirport, isDomestic);
+        ticket.flight = flightNumber;
         ticket.date = new Date(this.tripTime.startDate); // Set to departure date
         this.tickets.outbound.push(ticket);
         return ticket;
     }
 
-    // Add a new ticket for return journey
-    addInboundTicket(departAirport, arrivalAirport, isDomestic = false) {
+    // Updated addInboundTicket method with flight number
+    addInboundTicket(departAirport, arrivalAirport, flightNumber, isDomestic = false) {
         const ticket = new Ticket('return');
         ticket.setFlightDetails(departAirport, arrivalAirport, isDomestic);
+        ticket.flight = flightNumber;
         ticket.date = new Date(this.tripTime.returnDate); // Set to return date
         this.tickets.inbound.push(ticket);
         return ticket;

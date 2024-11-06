@@ -1,3 +1,5 @@
+import { planConfig } from "./planConfig";
+
 const flightDatabase = {
     "2024-11-15": {
         "data": [{
