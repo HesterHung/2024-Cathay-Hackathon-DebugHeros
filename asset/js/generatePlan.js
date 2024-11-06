@@ -271,7 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function renderFlights(flights) {
-    const container = document.getElementById('flightContainer');
+    
+    const container = document.querySelector('.ticket-body');
     container.innerHTML = `
         <div class="col-md-6">
             <div class="flight-info">

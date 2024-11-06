@@ -82,8 +82,85 @@
                 </div>
             </div>
 
-            <div class="row mt-5" id="flightContainer">
-                <!-- Flight information will be dynamically inserted here -->
+            <div class="ticket-container mt-5">
+                <div class="ticket-header">
+                    <h4>Flight Details</h4>
+                </div>
+                <div class="ticket-body">
+                    <div class="ticket outbound">
+                        <div class="flight-route">
+                            <div class="airport-info departure">
+                                <span class="airport-code">${flights.outbound.from}</span>
+                                <span class="flight-time">${flights.outbound.time}</span>
+                                <span class="flight-date">${flights.outbound.date}</span>
+                            </div>
+                            <div class="flight-arrow">
+                                <span class="arrow-line"></span>
+                                <span class="arrow-head">▶</span>
+                            </div>
+                            <div class="airport-info arrival">
+                                <span class="airport-code">${flights.outbound.to}</span>
+                                <span class="flight-time">21:40</span>
+                                <span class="flight-date">${flights.outbound.date}</span>
+                            </div>
+                        </div>
+                        <div class="flight-details">
+                            <div class="detail-item">
+                                <span class="label">Flight</span>
+                                <span class="value">${flights.outbound.flightNo}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Class</span>
+                                <span class="value">${flights.outbound.class}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Type</span>
+                                <span class="value">${flights.outbound.type}</span>
+                            </div>
+                        </div>
+                        <div class="ticket-actions">
+                            <button class="btn btn-outline-dark">Choose Another Flight</button>
+                            <button class="btn btn-outline-dark">Save to My Planner</button>
+                        </div>
+                    </div>
+            
+                    <div class="ticket inbound">
+                        <div class="flight-route">
+                            <div class="airport-info departure">
+                                <span class="airport-code">${flights.inbound.from}</span>
+                                <span class="flight-time">${flights.inbound.time}</span>
+                                <span class="flight-date">${flights.inbound.date}</span>
+                            </div>
+                            <div class="flight-arrow">
+                                <span class="arrow-line"></span>
+                                <span class="arrow-head">▶</span>
+                            </div>
+                            <div class="airport-info arrival">
+                                <span class="airport-code">${flights.inbound.to}</span>
+                                <span class="flight-time">21:40</span>
+                                <span class="flight-date">${flights.inbound.date}</span>
+                            </div>
+                        </div>
+                        <div class="flight-details">
+                            <div class="detail-item">
+                                <span class="label">Flight</span>
+                                <span class="value">${flights.inbound.flightNo}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Class</span>
+                                <span class="value">${flights.inbound.class}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Type</span>
+                                <span class="value">${flights.inbound.type}</span>
+                            </div>
+                        </div>
+                        <div class="ticket-actions">
+                            <button class="btn btn-outline-dark">Choose Another Flight</button>
+                            <button class="btn btn-dark">Claim & Purchase Your Ticket</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
