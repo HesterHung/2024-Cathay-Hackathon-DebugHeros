@@ -1,0 +1,138 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header img {
+    width: 80px;
+    height: 80px;
+}
+
+.header h1 {
+    color: #333;
+}
+
+.header .nav a {
+    color: #555;
+    text-decoration: none;
+    margin-left: 20px;
+    transition: color 0.3s;
+}
+
+.header .nav a:hover {
+    color: #000;
+}
+
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Align items at the start */
+    gap: 40px;
+    min-height: 450px; /* Optional: set a minimum height for better spacing */
+}
+
+.question-box {
+    flex: 1;
+    top: 10px;
+    margin-top: 40; /* Add top margin to raise the box */
+    margin-bottom: 0; /* Remove bottom margin */
+    text-align: left; /* Center text inside the question box */
+}
+
+.question {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.btn-sure {
+    background-color: #003E42;
+    color: white;
+}
+
+.btn-later {
+    background-color: transparent;
+    color: #000;
+    text-decoration: underline;
+}
+
+.trip-card {
+    width: 350px;
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.trip-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.trip-content {
+    padding: 20px;
+    background-color: #f8f8f8;
+}
+
+.trip-title {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-decoration: underline;
+}
+
+.trip-day {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .trip-card {
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .buttons {
+        flex-direction: column;
+    }
+}
