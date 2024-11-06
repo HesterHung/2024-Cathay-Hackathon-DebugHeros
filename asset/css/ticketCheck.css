@@ -388,3 +388,46 @@ date-wrapper {
     font-size: 1.2rem;
     color: #333;
 }
+
+.return-flight-header {
+    color: #2c3e50;
+    margin-bottom: 2rem;
+}
+
+.date-container {
+    margin-bottom: 2rem;
+}
+
+.loading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 1s ease-out;
+}
+
+.loading-container.fade-out {
+    opacity: 0;
+}
+
+.loading-text {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+/* Disable dates before departure date in return date picker */
+.date-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+}
+
+.date-input[disabled] {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
