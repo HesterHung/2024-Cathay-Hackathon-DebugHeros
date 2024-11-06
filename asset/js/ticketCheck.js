@@ -167,8 +167,9 @@ function initializePage() {
     loadFlightData();
     const dateInput = document.getElementById('flightDate');
     
-    // Determine if this is return flight page
-    isReturnFlight = window.location.pathname.includes('return-flight');
+    // Modify the check to look specifically for returnTicketCheck.html
+    isReturnFlight = window.location.pathname.includes('returnTicketCheck');
+    console.log('Current page is return flight:', isReturnFlight); // Debug log
     
     if (isReturnFlight) {
         // Set minimum date as the day after departure
@@ -193,6 +194,7 @@ function initializePage() {
 
     updatePageForDate(dateInput.value);
 }
+
 
 async function handleFlightSelection(selectedDate, selectedTimeOption) {
     const flights = await fetchFlightsForDate(selectedDate);
@@ -285,7 +287,6 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             await handleFlightSelection(selectedDate, selectedTimeOption);
 
-            // Show loading animation
             const loadingContainer = document.createElement('div');
             loadingContainer.className = 'loading-container';
             loadingContainer.innerHTML = `
@@ -297,13 +298,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const dotsInterval = animateDots();
 
-            // Redirect after processing
+            // Modified redirect logic to be more explicit
             setTimeout(() => {
                 clearInterval(dotsInterval);
                 loadingContainer.classList.add('fade-out');
                 
                 setTimeout(() => {
-                    window.location.href = isReturnFlight ? 'payment.html' : 'returnTicketCheck.html';
+                    const currentPage = window.location.pathname;
+                    if (currentPage.includes('returnTicketCheck')) {
+                        window.location.href = 'ticketConfirmation.html';
+                    } else {
+                        window.location.href = 'returnTicketCheck.html';
+                    }
                 }, 1000);
             }, 2000);
 
