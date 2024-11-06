@@ -47,6 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
         planConfig.save();
         
         // Navigation logic here
-        // window.location.href = 'next-page.html';
+        window.location.href = './formFillingConfirmation.html'
     });
 });
