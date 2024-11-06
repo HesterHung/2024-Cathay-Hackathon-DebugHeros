@@ -108,61 +108,6 @@ const packageData = {
     }
 };
 
-// Add these new functions
-async function getDestinationCoordinates(destination) {
-    try {
-        const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(destination)}&key=${API_CONFIG.GOOGLE_MAPS_KEY}`
-        );
-        const data = await response.json();
-
-        if (data.results && data.results[0]) {
-            const location = data.results[0].geometry.location;
-            return {
-                lat: location.lat,
-                lon: location.lng
-            };
-        }
-        throw new Error('Location not found');
-    } catch (error) {
-        console.error('Error getting coordinates:', error);
-        return null;
-    }
-}
-
-async function getPointsOfInterest(coordinates, limit = 10) {
-    try {
-        if (!coordinates) throw new Error('Invalid coordinates');
-
-        const response = await fetch(
-            `https://api.opentripmap.com/0.1/en/places/autosuggest?` +
-            `name=tourist&radius=5000&lon=${coordinates.lon}&lat=${coordinates.lat}` +
-            `&kinds=interesting_places,cultural,historical,natural&rate=3&limit=${limit}` +
-            `&apikey=${API_CONFIG.OPENTRIPMAP_KEY}`
-        );
-
-        if (!response.ok) {
-            throw new Error('API request failed');
-        }
-
-        const data = await response.json();
-
-        // If data is not an array, return default items
-        if (!Array.isArray(data)) {
-            return DEFAULT_PACKAGE_DATA.itinerary[0].items;
-        }
-
-        return data.map(place => ({
-            title: place.name || 'Unnamed Location',
-            type: "event",
-            description: place.kinds || 'No description available'
-        }));
-    } catch (error) {
-        console.error('Error fetching points of interest:', error);
-        // Return default items from DEFAULT_PACKAGE_DATA
-        return DEFAULT_PACKAGE_DATA.itinerary[0].items;
-    }
-}
 
 function renderStars(count) {
     return "★".repeat(count) + "☆".repeat(5 - count);
@@ -217,60 +162,96 @@ const updatedPackageData = {
     ]
 };
 
+async function getActivitiesSuggestions(destination, limit = 10) {
+    try {
+        const response = await fetch('http://ec2-54-179-40-164.ap-southeast-1.compute.amazonaws.com:8000/ken_api/activity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                destination: destination,
+                no_of_suggestions: limit
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('API request failed');
+        }
+
+        const data = await response.json();
+        return Object.entries(data).map(([_, [name, type]]) => ({
+            title: name,
+            type: "event"
+        }));
+    } catch (error) {
+        console.error('Error fetching activities:', error);
+        return DEFAULT_PACKAGE_DATA.itinerary[0].items;
+    }
+}
+
+
 class ItineraryManager {
     constructor(containerId, data) {
         this.container = document.getElementById(containerId);
-        this.data = data;
+        this.data = this.ensureMinimumItems(data);
         this.draggedItem = null;
-        this.destination = 'Tokyo'; // Add this line
-        this.suggestions = []; // Add this line
-        this.render();
-        this.initializeDragAndDrop();
-        this.initializeLocationSuggestions(); // Add this line
+        this.destination = 'Japan';
+        this.init();
     }
 
-    async initializeLocationSuggestions() {
+    async init() {
         try {
-            const coordinates = await getDestinationCoordinates(this.destination);
-            if (coordinates) {
-                const suggestions = await getPointsOfInterest(coordinates);
-                this.suggestions = suggestions;
-                this.renderSuggestions();
-            }
-        } catch (error) {
-            console.error('Error initializing suggestions:', error);
-            this.suggestions = [];
-        }
-    }
-
-    renderSuggestions() {
-        try {
-            if (!Array.isArray(this.suggestions) || this.suggestions.length === 0) {
-                this.suggestions = DEFAULT_PACKAGE_DATA.itinerary[0].items;
-            }
-
-            const timeSection = this.container.querySelector('.time-section[data-time="MORNING"]');
-            if (timeSection) {
-                const itemsContainer = timeSection.querySelector('.items-container');
-
-                // Clear existing items
-                itemsContainer.innerHTML = '';
-
-                // Add suggestions as items
-                this.suggestions.forEach((item, index) => {
-                    const itemElement = document.createElement('div');
-                    itemElement.innerHTML = this.renderItem(item, index);
-                    itemsContainer.appendChild(itemElement.firstElementChild);
-                });
-
-                this.initializeDragAndDrop();
-            }
-        } catch (error) {
-            console.error('Error rendering suggestions:', error);
-            // Use default items if rendering fails
-            this.data.itinerary[0].items = DEFAULT_PACKAGE_DATA.itinerary[0].items;
+            const activities = await getActivitiesSuggestions(this.destination, 12);
+            this.updateActivities(activities);
             this.render();
+            this.initializeDragAndDrop();
+        } catch (error) {
+            console.error('Failed to load initial activities:', error);
+            this.render();
+            this.initializeDragAndDrop();
         }
+    }
+
+    updateActivities(activities) {
+        // Clear existing items
+        this.data.itinerary = this.data.itinerary.map(section => ({
+            ...section,
+            items: []
+        }));
+
+        // Distribute activities across time periods
+        activities.forEach((activity, index) => {
+            const period = Math.floor(index / 4); // 4 activities per time period
+            if (period < this.data.itinerary.length) {
+                this.data.itinerary[period].items.push({
+                    title: activity.title,
+                    type: "event"
+                });
+            }
+        });
+    }
+
+    ensureMinimumItems(data) {
+        const minItemsPerSection = 4;
+        const modifiedData = { ...data };
+
+        modifiedData.itinerary = data.itinerary.map(section => {
+            const items = [...(section.items || [])];
+            while (items.length < minItemsPerSection) {
+                items.push({
+                    title: `Suggested Activity ${items.length + 1}`,
+                    type: "event",
+                    description: "Default activity description"
+                });
+            }
+            return {
+                time: section.time,
+                items: items
+            };
+        });
+
+        return modifiedData;
     }
 
     render() {
@@ -289,7 +270,7 @@ class ItineraryManager {
                 ${this.data.itinerary.map(section => `
                     <div class="time-section" data-time="${section.time}">
                         <div class="time-header">${section.time}</div>
-                        <div class="items-container">
+                        <div class="items-container" data-time="${section.time}">
                             ${section.items.map((item, index) => this.renderItem(item, index)).join('')}
                         </div>
                         <div class="custom-event-input">
@@ -315,7 +296,9 @@ class ItineraryManager {
                     <span></span>
                     <span></span>
                 </div>
-                <div class="item-content">${item.title}</div>
+                <div class="item-content">
+                    <div class="item-title">${item.title}</div>
+                </div>
                 <div class="action-icon">☰</div>
             </div>
         `;
@@ -326,30 +309,19 @@ class ItineraryManager {
         const containers = this.container.querySelectorAll('.items-container');
 
         items.forEach(item => {
-            const dragHandle = item.querySelector('.drag-handle');
-
-            // Only initiate drag when clicking the drag handle
-            dragHandle.addEventListener('mousedown', () => {
-                item.draggable = true;
-            });
-
-            item.addEventListener('mouseup', () => {
-                item.draggable = false;
-            });
-
-            item.addEventListener('dragstart', (e) => {
-                this.draggedItem = item;
+            item.addEventListener('dragstart', () => {
                 item.classList.add('dragging');
+                this.draggedItem = item;
             });
 
-            item.addEventListener('dragend', (e) => {
+            item.addEventListener('dragend', () => {
                 item.classList.remove('dragging');
                 this.draggedItem = null;
             });
         });
 
         containers.forEach(container => {
-            container.addEventListener('dragover', (e) => {
+            container.addEventListener('dragover', e => {
                 e.preventDefault();
                 const afterElement = this.getDragAfterElement(container, e.clientY);
                 if (this.draggedItem) {
@@ -369,6 +341,7 @@ class ItineraryManager {
         return draggableElements.reduce((closest, child) => {
             const box = child.getBoundingClientRect();
             const offset = y - box.top - box.height / 2;
+
             if (offset < 0 && offset > closest.offset) {
                 return { offset: offset, element: child };
             } else {
@@ -378,8 +351,9 @@ class ItineraryManager {
     }
 
     attachEventListeners() {
-        // Toggle buttons
         const toggles = this.container.querySelectorAll('.toggle-item');
+        const customEventInputs = this.container.querySelectorAll('.custom-event-input');
+
         toggles.forEach(toggle => {
             toggle.addEventListener('click', () => {
                 toggles.forEach(t => t.classList.remove('active'));
@@ -387,68 +361,80 @@ class ItineraryManager {
             });
         });
 
-        // Custom event inputs
-        const customEventInputs = this.container.querySelectorAll('.custom-event-input');
         customEventInputs.forEach(inputContainer => {
             const input = inputContainer.querySelector('input');
             const addBtn = inputContainer.querySelector('.add-event-btn');
             const locationBtn = inputContainer.querySelector('.location-btn');
-            const timeSection = inputContainer.closest('.time-section');
-            const itemsContainer = timeSection.querySelector('.items-container');
+            const itemsContainer = inputContainer.closest('.time-section').querySelector('.items-container');
 
-            addBtn.addEventListener('click', () => {
-                if (input.value.trim()) {
-                    const newItem = {
-                        title: input.value.trim(),
-                        type: 'event'
-                    };
-
-                    const itemElement = document.createElement('div');
-                    itemElement.innerHTML = this.renderItem(newItem, itemsContainer.children.length);
-                    itemsContainer.appendChild(itemElement.firstElementChild);
-
-                    input.value = '';
-                    this.initializeDragAndDrop();
-                }
-            });
-
+            addBtn.addEventListener('click', () => this.handleAddEvent(input, itemsContainer));
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    addBtn.click();
+                    this.handleAddEvent(input, itemsContainer);
                 }
             });
+            locationBtn.addEventListener('click', () => this.handleLocationClick(itemsContainer));
+        });
+    }
 
-            locationBtn.addEventListener('click', async () => {
-                try {
-                    const coordinates = await getDestinationCoordinates(this.destination);
-                    if (coordinates) {
-                        const suggestions = await getPointsOfInterest(coordinates);
-                        if (Array.isArray(suggestions) && suggestions.length > 0) {
-                            const newItem = suggestions[Math.floor(Math.random() * suggestions.length)];
-                            const itemElement = document.createElement('div');
-                            itemElement.innerHTML = this.renderItem(newItem, itemsContainer.children.length);
-                            itemsContainer.appendChild(itemElement.firstElementChild);
-                            this.initializeDragAndDrop();
-                        } else {
-                            // Use default item if no suggestions
-                            const defaultItem = DEFAULT_PACKAGE_DATA.itinerary[0].items[0];
-                            const itemElement = document.createElement('div');
-                            itemElement.innerHTML = this.renderItem(defaultItem, itemsContainer.children.length);
-                            itemsContainer.appendChild(itemElement.firstElementChild);
-                            this.initializeDragAndDrop();
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error getting suggestions:', error);
-                    // Use default item on error
-                    const defaultItem = DEFAULT_PACKAGE_DATA.itinerary[0].items[0];
-                    const itemElement = document.createElement('div');
-                    itemElement.innerHTML = this.renderItem(defaultItem, itemsContainer.children.length);
-                    itemsContainer.appendChild(itemElement.firstElementChild);
-                    this.initializeDragAndDrop();
-                }
+    async handleLocationClick(itemsContainer) {
+        try {
+            const suggestions = await getActivitiesSuggestions(this.destination);
+            this.showSuggestionsPopup(suggestions, itemsContainer);
+        } catch (error) {
+            console.error('Error getting suggestions:', error);
+            // Use default item on error
+            this.addItemToContainer(DEFAULT_PACKAGE_DATA.itinerary[0].items[0], itemsContainer);
+        }
+    }
+
+    showSuggestionsPopup(suggestions, itemsContainer) {
+        const popup = document.createElement('div');
+        popup.className = 'suggestions-popup';
+        popup.innerHTML = `
+            <div class="suggestions-content">
+                <h3>Suggested Activities in ${this.destination}</h3>
+                <div class="suggestions-list">
+                    ${suggestions.map((item, index) => `
+                        <div class="suggestion-item">
+                            <div class="suggestion-title">${item.title}</div>
+                            <div class="suggestion-description">${item.description}</div>
+                            <button class="add-suggestion-btn" data-index="${index}">Add to Itinerary</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="close-suggestions-btn">Close</button>
+            </div>
+        `;
+
+        document.body.appendChild(popup);
+
+        // Add event listeners
+        popup.querySelector('.close-suggestions-btn').addEventListener('click', () => popup.remove());
+        popup.querySelectorAll('.add-suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const index = btn.dataset.index;
+                this.addItemToContainer(suggestions[index], itemsContainer);
             });
         });
+    }
+
+    handleAddEvent(input, itemsContainer) {
+        const value = input.value.trim();
+        if (value) {
+            this.addItemToContainer({
+                title: value,
+                type: 'event'
+            }, itemsContainer);
+            input.value = '';
+        }
+    }
+
+    addItemToContainer(item, container) {
+        const itemElement = document.createElement('div');
+        itemElement.innerHTML = this.renderItem(item, container.children.length);
+        container.appendChild(itemElement.firstElementChild);
+        this.initializeDragAndDrop();
     }
 }
 
@@ -664,11 +650,11 @@ class TripPlanner {
 }
 
 // Initialize the page
-document.addEventListener('DOMContentLoaded', () => {
+// Update the initialization
+document.addEventListener('DOMContentLoaded', async () => {
     initializePackageSelector();
     const tripPlanner = new TripPlanner();
     new ItineraryManager('itineraryContainer', updatedPackageData);
     renderFlights(packageData.flights);
     renderBannerImg();
 });
-
