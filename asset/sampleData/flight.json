@@ -1,0 +1,194 @@
+{
+    "2024-11-15": {
+        "data": [
+            {
+                "itinerary_id": "IT67890",
+                "total_price": {
+                    "amount": 850.00,
+                    "currency": "USD"
+                },
+                "flights": [
+                    {
+                        "flight_code": "AA456",
+                        "departure": {
+                            "airport_code": "JFK",
+                            "airport_name": "John F. Kennedy International Airport",
+                            "terminal": "T4",
+                            "time": "2024-11-15T10:00:00Z"
+                        },
+                        "arrival": {
+                            "airport_code": "ORD",
+                            "airport_name": "Chicago O'Hare International Airport",
+                            "terminal": "T3",
+                            "time": "2024-11-15T12:00:00Z"
+                        },
+                        "duration": 120,
+                        "airline": {
+                            "code": "AA",
+                            "name": "American Airlines"
+                        },
+                        "class_type": "economy"
+                    },
+                    {
+                        "flight_code": "AA789",
+                        "departure": {
+                            "airport_code": "ORD",
+                            "airport_name": "Chicago O'Hare International Airport",
+                            "terminal": "T5",
+                            "time": "2024-11-15T14:00:00Z"
+                        },
+                        "arrival": {
+                            "airport_code": "LAX",
+                            "airport_name": "Los Angeles International Airport",
+                            "terminal": "T5",
+                            "time": "2024-11-15T16:40:00Z"
+                        },
+                        "duration": 160,
+                        "airline": {
+                            "code": "AA",
+                            "name": "American Airlines"
+                        },
+                        "class_type": "economy"
+                    }
+                ]
+            },
+            {
+                "itinerary_id": "IT67892",
+                "total_price": {
+                    "amount": 950.00,
+                    "currency": "USD"
+                },
+                "flights": [
+                    {
+                        "flight_code": "DL123",
+                        "departure": {
+                            "airport_code": "JFK",
+                            "airport_name": "John F. Kennedy International Airport",
+                            "terminal": "T2",
+                            "time": "2024-11-15T11:30:00Z"
+                        },
+                        "arrival": {
+                            "airport_code": "LAX",
+                            "airport_name": "Los Angeles International Airport",
+                            "terminal": "T2",
+                            "time": "2024-11-15T14:30:00Z"
+                        },
+                        "duration": 180,
+                        "airline": {
+                            "code": "DL",
+                            "name": "Delta Airlines"
+                        },
+                        "class_type": "economy"
+                    }
+                ]
+            }
+        ]
+    },
+    "2024-11-16": {
+        "data": [
+            {
+                "itinerary_id": "IT67893",
+                "total_price": {
+                    "amount": 299.00,
+                    "currency": "USD"
+                },
+                "flights": [
+                    {
+                        "flight_code": "UA1234",
+                        "departure": {
+                            "airport_code": "JFK",
+                            "terminal": "4",
+                            "time": "2024-11-16T06:30:00Z"
+                        },
+                        "arrival": {
+                            "airport_code": "LAX",
+                            "terminal": "5",
+                            "time": "2024-11-16T09:30:00Z"
+                        },
+                        "duration": 180,
+                        "airline": {
+                            "code": "UA",
+                            "name": "United Airlines"
+                        },
+                        "class_type": "economy"
+                    }
+                ]
+            },
+            {
+                "itinerary_id": "IT67894",
+                "total_price": {
+                    "amount": 689.00,
+                    "currency": "USD"
+                },
+                "flights": [
+                    {
+                        "flight_code": "DL2468",
+                        "departure": {
+                            "airport_code": "JFK",
+                            "terminal": "2",
+                            "time": "2024-11-16T10:15:00Z"
+                        },
+                        "arrival": {
+                            "airport_code": "LAX",
+                            "terminal": "3",
+                            "time": "2024-11-16T13:30:00Z"
+                        },
+                        "duration": 195,
+                        "airline": {
+                            "code": "DL",
+                            "name": "Delta Airlines"
+                        },
+                        "class_type": "business"
+                    }
+                ]
+            },
+            {
+                "itinerary_id": "IT67895",
+                "total_price": {
+                    "amount": 445.00,
+                    "currency": "USD"
+                },
+                "flights": [
+                    {
+                        "flight_code": "AA3456",
+                        "departure": {
+                            "airport_code": "JFK",
+                            "terminal": "8",
+                            "time": "2024-11-16T14:00:00Z"
+                        },
+                        "arrival": {
+                            "airport_code": "ORD",
+                            "terminal": "3",
+                            "time": "2024-11-16T16:00:00Z"
+                        },
+                        "duration": 120,
+                        "airline": {
+                            "code": "AA",
+                            "name": "American Airlines"
+                        },
+                        "class_type": "economy"
+                    },
+                    {
+                        "flight_code": "AA3789",
+                        "departure": {
+                            "airport_code": "ORD",
+                            "terminal": "3",
+                            "time": "2024-11-16T17:00:00Z"
+                        },
+                        "arrival": {
+                            "airport_code": "LAX",
+                            "terminal": "4",
+                            "time": "2024-11-16T21:00:00Z"
+                        },
+                        "duration": 240,
+                        "airline": {
+                            "code": "AA",
+                            "name": "American Airlines"
+                        },
+                        "class_type": "economy"
+                    }
+                ]
+            }
+        ]
+    }
+}
