@@ -93,3 +93,17 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Outbound Tickets:', planConfig.tickets.outbound);
     console.log('Inbound Tickets:', planConfig.tickets.inbound);
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmButton = document.querySelector('.confirm-button');
+    confirmButton.addEventListener('click', function() {
+        // Disable the button to prevent multiple clicks
+        confirmButton.disabled = true;
+        confirmButton.textContent = 'Processing...';
+        
+        // Optional: Add a small delay to show the processing state
+        setTimeout(() => {
+            window.location.href = 'generateLoading.html';
+        }, 500); // 500ms delay
+    });
+});

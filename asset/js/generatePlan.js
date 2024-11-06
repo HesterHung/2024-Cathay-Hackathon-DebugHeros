@@ -488,3 +488,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderFlights(packageData.flights);
     renderBannerImg();
 });
+

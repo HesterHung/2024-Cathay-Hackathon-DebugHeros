@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,5 +38,29 @@
     <script type="module" src="js/planConfig.js"></script>
     <script type="module" src="js/generatePlan.js"></script>
     <script type="module" src="js/travelExtra.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Wait for animations to complete (3 seconds) then redirect
+            setTimeout(function () {
+                window.location.href = 'generatePlan.html';
+            }, 3000); // 3 seconds delay
+
+            // Optional: You can add a loading progress indicator
+            const startTime = Date.now();
+            const interval = setInterval(function () {
+                const elapsedTime = Date.now() - startTime;
+                const progress = Math.min(100, (elapsedTime / 3000) * 100);
+
+                // If you want to show progress somewhere in your UI
+                // You can update it here
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 50);
+        });
+    </script>
 </body>
+
 </html>

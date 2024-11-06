@@ -122,3 +122,8 @@
         width: 95%;
     }
 }
+
+.confirm-button:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
