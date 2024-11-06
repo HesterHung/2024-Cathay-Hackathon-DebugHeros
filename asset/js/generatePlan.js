@@ -1,8 +1,9 @@
 // Sample data structure - in real application, this would come from an API
 // Add at the beginning of your file
+import CONFIG from "../config";
 const API_CONFIG = {
     OPENTRIPMAP_KEY: '5ae2e3f221c38a28845f05b6628727068eb707c586acd059ef3fcf53',
-    GOOGLE_MAPS_KEY: 'AIzaSyC7vmqbJpX9ctZp_4eUpPjz3GUkXkaUv2k'
+    GOOGLE_MAPS_KEY: CONFIG.GOOGLE_MAPS_KEY,
 };
 
 
@@ -164,7 +165,7 @@ const updatedPackageData = {
 
 async function getActivitiesSuggestions(destination, limit = 10) {
     try {
-        const response = await fetch('http://ec2-54-179-40-164.ap-southeast-1.compute.amazonaws.com:8000/ken_api/activity', {
+        const response = await fetch('http://ec2-54-179-40-164.ap-southeast-1.compute.amazonaws.com:8000/ken_api/activity/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -197,7 +198,82 @@ class ItineraryManager {
         this.data = this.ensureMinimumItems(data);
         this.draggedItem = null;
         this.destination = 'Japan';
+        this.map = null;
+        this.markers = [];
+        this.loadGoogleMapsScript();
         this.init();
+    }
+    
+    loadGoogleMapsScript() {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${API_CONFIG.GOOGLE_MAPS_KEY}&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        
+        // Define global callback
+        window.initMap = () => {
+            this.initMap();
+        };
+
+        document.head.appendChild(script);
+    }
+
+    initMap() {
+        if (!google) return; // Exit if Google Maps isn't loaded
+        
+        // Center on Tokyo by default
+        const tokyo = { lat: 35.6762, lng: 139.6503 };
+        this.map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 13,
+            center: tokyo,
+        });
+    }
+
+    async searchLocation(locationName) {
+        const geocoder = new google.maps.Geocoder();
+        try {
+            const result = await new Promise((resolve, reject) => {
+                geocoder.geocode({ 
+                    address: `${locationName}, ${this.destination}` 
+                }, (results, status) => {
+                    if (status === 'OK') {
+                        resolve(results[0]);
+                    } else {
+                        reject(new Error(`Geocoding failed: ${status}`));
+                    }
+                });
+            });
+
+            // Clear existing markers
+            this.markers.forEach(marker => marker.setMap(null));
+            this.markers = [];
+
+            // Add new marker
+            const marker = new google.maps.Marker({
+                map: this.map,
+                position: result.geometry.location,
+                title: locationName
+            });
+            this.markers.push(marker);
+
+            // Center map on location
+            this.map.setCenter(result.geometry.location);
+            this.map.setZoom(15);
+
+            // Add info window
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<div><strong>${locationName}</strong></div>`
+            });
+
+            marker.addListener('click', () => {
+                infoWindow.open(this.map, marker);
+            });
+
+            return result;
+        } catch (error) {
+            console.error('Error searching location:', error);
+            return null;
+        }
     }
 
     async init() {
@@ -377,16 +453,27 @@ class ItineraryManager {
         });
     }
 
-    async handleLocationClick(itemsContainer) {
-        try {
-            const suggestions = await getActivitiesSuggestions(this.destination);
-            this.showSuggestionsPopup(suggestions, itemsContainer);
-        } catch (error) {
-            console.error('Error getting suggestions:', error);
-            // Use default item on error
-            this.addItemToContainer(DEFAULT_PACKAGE_DATA.itinerary[0].items[0], itemsContainer);
+// Modify the existing handleLocationClick method
+async handleLocationClick(itemsContainer) {
+    const input = itemsContainer.closest('.time-section')
+        .querySelector('.custom-event-input input');
+    const locationName = input.value.trim();
+    
+    if (locationName) {
+        const result = await this.searchLocation(locationName);
+        if (result) {
+            this.addItemToContainer({
+                title: locationName,
+                type: 'event',
+                location: {
+                    lat: result.geometry.location.lat(),
+                    lng: result.geometry.location.lng()
+                }
+            }, itemsContainer);
+            input.value = '';
         }
     }
+}
 
     showSuggestionsPopup(suggestions, itemsContainer) {
         const popup = document.createElement('div');
