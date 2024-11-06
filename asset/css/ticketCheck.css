@@ -1,0 +1,366 @@
+:root {
+    --cathay-green: #003E42;
+    /* Changed from #006666 */
+    --cathay-red: #ff4444;
+    --light-gray: #f5f5f5;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+
+.logo {
+    width: 200px;
+    margin: 20px 0;
+}
+
+.date-picker {
+    border: 2px solid var(--cathay-green);
+    border-radius: 10px;
+    padding: 10px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+}
+
+.time-selector {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
+.time-option {
+    padding: 10px 15px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    min-width: 120px;
+}
+
+.time-option:hover {
+    border-color: var(--cathay-green);
+}
+
+.time-option.selected {
+    border-color: var(--cathay-green);
+    background-color: rgba(0, 62, 66, 0.1);
+}
+
+.ticket-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.ticket {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 380px;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.ticket:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.ticket-segment {
+    position: relative;
+}
+
+.ticket-segment:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e0e0e0 20%, #e0e0e0 80%, transparent);
+}
+
+.ticket-header {
+    background: linear-gradient(135deg, var(--cathay-green), #003E42);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.ticket-body {
+    padding: 20px;
+    background: white;
+}
+
+.ticket-body .row {
+    margin: 0;
+    padding: 0;
+}
+
+.ticket-body small {
+    color: #666;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.ticket-body .col-6>div:not(.small) {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+    margin-top: 4px;
+}
+
+.ticket-body .small.text-muted {
+    color: #888 !important;
+    font-size: 0.85rem;
+    margin-top: 2px;
+}
+
+.terminal-section {
+    background: var(--light-gray);
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #eee;
+}
+
+.terminal-section div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.terminal-section div::before {
+    content: '🏢';
+    font-size: 1rem;
+}
+
+/* Add decorative elements */
+.ticket::before,
+.ticket::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.ticket::before {
+    left: -10px;
+}
+
+.ticket::after {
+    right: -10px;
+}
+
+/* Price badge */
+.price-badge {
+    position: absolute;
+    top: 20px;
+    right: -30px;
+    background: var(--cathay-red);
+    color: white;
+    padding: 5px 30px;
+    transform: rotate(45deg);
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .ticket {
+        width: 100%;
+        max-width: 380px;
+    }
+
+    .ticket-body .col-6>div:not(.small) {
+        font-size: 1.1rem;
+    }
+}
+
+
+/* Add loading animation */
+.loading {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.loading.active {
+    display: block;
+}
+
+/* Add these styles to your existing CSS */
+.confirm-btn {
+    background: var(--cathay-green);
+    color: white;
+    border: none;
+    padding: 15px 50px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(3, 82, 87, 0.2);
+    cursor: pointer;
+    margin: 30px 0;
+}
+
+.confirm-btn:hover {
+    background: #046067;
+    box-shadow: 0 3px 10px rgba(0, 62, 66, 0.25);
+}
+
+.confirm-btn:active {
+    transform: translateY(1px);
+}
+
+.confirm-btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Simple loading state */
+.confirm-btn.loading {
+    opacity: 0.8;
+    cursor: wait;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    .confirm-btn {
+        padding: 12px 40px;
+        font-size: 1rem;
+        width: 80%;
+        max-width: 300px;
+    }
+}
+
+/* Add these styles to your existing CSS */
+date-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 20px 0;
+    padding-top: 15px;
+    cursor: pointer;
+}
+
+.date-input {
+    background-color: white;
+    border: 2px solid var(--cathay-green);
+    border-radius: 12px;
+    padding: 15px 50px 15px 25px;
+    font-size: 1.2rem;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    font-family: inherit;
+    min-width: 280px;
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+}
+
+
+.date-wrapper:hover::after {
+    opacity: 1;
+}
+
+.date-input:hover {
+    border-color: #003E42;
+    box-shadow: 0 4px 15px rgba(0, 62, 66, 0.15);
+    transform: translateY(-1px);
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: #003E42;
+    box-shadow: 0 0 0 4px rgba(0, 62, 66, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Hide default calendar icon */
+.date-input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.date-label {
+    position: absolute;
+    left: 25px;
+    top: 0;
+    background: white;
+    padding: 0 8px;
+    font-size: 0.9rem;
+    color: var(--cathay-green);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.date-container {
+    text-align: center;
+    margin: 30px 0;
+    position: relative;
+}
+
+/* Add decorative elements */
+.date-container::before,
+.date-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--cathay-green));
+    opacity: 0.3;
+}
+
+.date-container::before {
+    right: calc(50% + 160px);
+}
+
+.date-container::after {
+    left: calc(50% + 160px);
+    transform: rotate(180deg);
+}
+
+/* For mobile devices */
+@media (max-width: 768px) {
+    .date-input {
+        width: 90%;
+        max-width: 300px;
+        font-size: 1.1rem;
+        padding: 12px 45px 12px 20px;
+    }
+
+    .date-container::before,
+    .date-container::after {
+        display: none;
+    }
+
+    .date-label {
+        left: 20px;
+    }
+}

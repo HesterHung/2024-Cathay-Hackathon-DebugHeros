@@ -2,6 +2,9 @@
 import { planConfig } from "./planConfig.js";
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    console.log('Current planConfig', planConfig);
+
     const formatDate = (date) => {
         const d = new Date(date);
         return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;

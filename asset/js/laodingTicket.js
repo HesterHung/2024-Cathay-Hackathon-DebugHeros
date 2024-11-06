@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Wait for animation to complete before redirecting
         setTimeout(() => {
-            window.location.href = 'ticket.html';
+            window.location.href = 'ticketCheck.html';
         }, 1000);
     }, 4000); // Adjust loading time as needed
 });
