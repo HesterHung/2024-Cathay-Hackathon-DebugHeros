@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.check-ticket')?.addEventListener('click', function(e) {
             e.preventDefault();
             // Add your navigation logic here
-            window.location.href = 'ticket.html';
+            window.location.href = 'loadingTicket.html';
         });
     } catch (error) {
         console.error('Error initializing confirmation page:', error);
