@@ -190,7 +190,11 @@ const fillPlanConfig = (inputValue) => {
                 planConfig.location.departCountry = inputValue;
                 break;
             case "departAirport":
-                planConfig.ticket.departAirport = inputValue;
+                // Initialize outbound ticket
+                if (planConfig.tickets.outbound.length === 0) {
+                    planConfig.addOutboundTicket("", "");
+                }
+                planConfig.tickets.outbound[0].departAirport = inputValue;
                 break;
             case "arrivalCountries":
                 planConfig.location.country = inputValue;
@@ -199,24 +203,29 @@ const fillPlanConfig = (inputValue) => {
                 planConfig.location.city = inputValue;
                 break;
             case "arrivalAirport":
-                planConfig.ticket.arrivalAirport = inputValue;
+                // Set arrival airport for outbound ticket
+                planConfig.tickets.outbound[0].arrivalAirport = inputValue;
+                
+                // Create corresponding return ticket
+                planConfig.clearTickets('inbound');
+                planConfig.addInboundTicket(inputValue, planConfig.tickets.outbound[0].departAirport);
                 break;
             case "flightClasses":
-                planConfig.ticket.classes = inputValue;
+                // Apply classes to both tickets
+                const classInfo = inputValue.split(','); // Assuming format "class,package"
+                planConfig.tickets.outbound[0].setClassAndPackage(classInfo[0], classInfo[1]);
+                planConfig.tickets.inbound[0].setClassAndPackage(classInfo[0], classInfo[1]);
                 break;
             default:
                 console.warn('Unknown page type:', currentPage);
         }
         
-        // Save after each update
         planConfig.save();
-        
-        console.log(`Set ${currentPage} to:`, inputValue);
         console.log('Current planConfig:', planConfig);
     } catch (error) {
         console.error('Error in fillPlanConfig:', error);
     }
-}
+};
 
 function validateTripTime() {
     const startDateInput = document.getElementById('startDate');
@@ -249,11 +258,15 @@ function validateTripTime() {
             return false;
         }
 
-        // Update planConfig
+        // Update planConfig and ticket dates
         planConfig.tripTime = new TripTime(startDate, endDate);
         planConfig.dayLength = planConfig.tripTime.getDayLength();
-        planConfig.save();
 
+        // Set dates for outbound and inbound tickets
+        planConfig.tickets.outbound[0].date = new Date(startDate);
+        planConfig.tickets.inbound[0].date = new Date(endDate);
+
+        planConfig.save();
         hideInvalidFeedback();
         return true;
     } catch (e) {

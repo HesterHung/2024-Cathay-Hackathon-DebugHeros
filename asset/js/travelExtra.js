@@ -4,7 +4,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const cards = document.querySelectorAll('.option-card');
     const selectedOptions = new Set();
 
+    // Pre-select any existing travel extras from both tickets
+    const existingExtras = new Set([
+        ...(planConfig.tickets.outbound[0]?.travelExtras || []),
+        ...(planConfig.tickets.inbound[0]?.travelExtras || [])
+    ]);
+
     cards.forEach(card => {
+        const option = card.dataset.option;
+        if (existingExtras.has(option)) {
+            card.classList.add('selected');
+            selectedOptions.add(option);
+        }
+
         card.addEventListener('click', function() {
             const option = this.dataset.option;
             
@@ -19,12 +31,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.querySelector('.done-btn').addEventListener('click', function() {
-        // Convert Set to Array and add to planConfig
-        planConfig.ticket.travelExtras = Array.from(selectedOptions);
-        console.log('Selected options added to ticket:', planConfig.ticket.travelExtras);
+        const selectedExtras = Array.from(selectedOptions);
+
+        // Apply travel extras to both outbound and inbound tickets
+        if (planConfig.tickets.outbound[0]) {
+            planConfig.tickets.outbound[0].travelExtras = [...selectedExtras];
+        }
+        if (planConfig.tickets.inbound[0]) {
+            planConfig.tickets.inbound[0].travelExtras = [...selectedExtras];
+        }
+
+        console.log('Selected options added to tickets:', selectedExtras);
+        console.log('Current planConfig:', planConfig);
+
+        planConfig.save();
         
-        console.log('Current planConfig', planConfig);
-        // You can add navigation logic here
+        // Navigation logic here
         // window.location.href = 'next-page.html';
     });
 });

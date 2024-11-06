@@ -30,7 +30,8 @@ class TripTime {
 
 
 class Ticket {
-    constructor() {
+    constructor(type = 'departure') { // type can be 'departure' or 'return'
+        this.type = type;
         this.date = new Date();
         this.flight = "";
         this.departAirport = "";
@@ -38,11 +39,13 @@ class Ticket {
         this.classes = "";
         this.packagePlan = "";
         this.travelExtras = [];
+        this.isDomestic = false; // to identify domestic flights
     }
 
-    setFlightDetails(departAirport, arrivalAirport) {
+    setFlightDetails(departAirport, arrivalAirport, isDomestic = false) {
         this.departAirport = departAirport;
         this.arrivalAirport = arrivalAirport;
+        this.isDomestic = isDomestic;
     }
 
     setClassAndPackage(classes, packagePlan) {
@@ -67,7 +70,22 @@ class PlanConfig {
                     parsed.tripTime?.startDate,
                     parsed.tripTime?.returnDate
                 );
-                this.ticket = Object.assign(new Ticket(), parsed.ticket);
+                // Initialize tickets array
+                this.tickets = {
+                    outbound: [], // Array for outbound journey (can include domestic connections)
+                    inbound: []   // Array for return journey (can include domestic connections)
+                };
+                
+                // Restore tickets if they exist
+                if (parsed.tickets) {
+                    if (parsed.tickets.outbound) {
+                        this.tickets.outbound = parsed.tickets.outbound.map(t => Object.assign(new Ticket('departure'), t));
+                    }
+                    if (parsed.tickets.inbound) {
+                        this.tickets.inbound = parsed.tickets.inbound.map(t => Object.assign(new Ticket('return'), t));
+                    }
+                }
+                
                 this.dayLength = this.tripTime.getDayLength();
                 this.totalBudget = parsed.totalBudget || 0;
             } else {
@@ -83,9 +101,44 @@ class PlanConfig {
         this.userID = "";
         this.location = new Location("Unknown", "Unknown");
         this.tripTime = new TripTime(new Date(), new Date());
-        this.ticket = new Ticket();
+        this.tickets = {
+            outbound: [],
+            inbound: []
+        };
         this.dayLength = 0;
         this.totalBudget = 0;
+    }
+
+    // Add a new ticket for outbound journey
+    addOutboundTicket(departAirport, arrivalAirport, isDomestic = false) {
+        const ticket = new Ticket('departure');
+        ticket.setFlightDetails(departAirport, arrivalAirport, isDomestic);
+        ticket.date = new Date(this.tripTime.startDate); // Set to departure date
+        this.tickets.outbound.push(ticket);
+        return ticket;
+    }
+
+    // Add a new ticket for return journey
+    addInboundTicket(departAirport, arrivalAirport, isDomestic = false) {
+        const ticket = new Ticket('return');
+        ticket.setFlightDetails(departAirport, arrivalAirport, isDomestic);
+        ticket.date = new Date(this.tripTime.returnDate); // Set to return date
+        this.tickets.inbound.push(ticket);
+        return ticket;
+    }
+
+    // Remove a ticket
+    removeTicket(journeyType, index) {
+        if (this.tickets[journeyType] && this.tickets[journeyType][index]) {
+            this.tickets[journeyType].splice(index, 1);
+        }
+    }
+
+    // Clear all tickets for a journey type
+    clearTickets(journeyType) {
+        if (this.tickets[journeyType]) {
+            this.tickets[journeyType] = [];
+        }
     }
 
     save() {
@@ -101,7 +154,7 @@ class PlanConfig {
                         this.tripTime.returnDate.toISOString() : 
                         new Date().toISOString()
                 },
-                ticket: this.ticket,
+                tickets: this.tickets,
                 dayLength: this.tripTime?.getDayLength() || 0,
                 totalBudget: this.totalBudget
             };
@@ -122,6 +175,24 @@ class PlanConfig {
         this.totalBudget = 0;
     }
 }
+
+// Usage example:
+/*
+// Adding outbound tickets (including domestic connection)
+planConfig.addOutboundTicket('LAX', 'JFK', true); // Domestic flight
+planConfig.addOutboundTicket('JFK', 'LHR'); // International flight
+
+// Adding return tickets
+planConfig.addInboundTicket('LHR', 'JFK'); // International flight
+planConfig.addInboundTicket('JFK', 'LAX', true); // Domestic flight
+
+// Accessing tickets
+console.log(planConfig.tickets.outbound); // Array of outbound tickets
+console.log(planConfig.tickets.inbound); // Array of return tickets
+
+// Save configuration
+planConfig.save();
+*/
 
 // Create singleton instance
 const planConfig = new PlanConfig();
