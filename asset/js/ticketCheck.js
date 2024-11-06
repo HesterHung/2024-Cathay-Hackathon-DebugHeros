@@ -1,13 +1,14 @@
 import { planConfig } from "./planConfig";
 import { animateDots } from "./laodingTicket";
 
-let flightDatabase = {}
+let flightDatabase = {};
+let isReturnFlight = false;
 
 async function loadFlightData() {
     try {
         const response = await fetch('sampleData/flight.json');
         flightDatabase = await response.json();
-        console.log(flightDatabase); // verify the data is loaded
+        console.log(flightDatabase);
     } catch (error) {
         console.error('Error loading the JSON file:', error);
     }
@@ -165,139 +166,144 @@ async function updatePageForDate(dateString) {
 function initializePage() {
     loadFlightData();
     const dateInput = document.getElementById('flightDate');
-
-    const today = new Date();
-    const defaultDate = today.toISOString().split('T')[0];
-    dateInput.value = defaultDate;
+    
+    // Determine if this is return flight page
+    isReturnFlight = window.location.pathname.includes('return-flight');
+    
+    if (isReturnFlight) {
+        // Set minimum date as the day after departure
+        const departureDateObj = new Date(planConfig.tripTime.startDate);
+        const minReturnDate = new Date(departureDateObj);
+        minReturnDate.setDate(minReturnDate.getDate() + 1);
+        
+        dateInput.min = minReturnDate.toISOString().split('T')[0];
+        dateInput.value = planConfig.tripTime.returnDate || 
+            minReturnDate.toISOString().split('T')[0];
+    } else {
+        // For departure flight
+        const today = new Date();
+        dateInput.min = today.toISOString().split('T')[0];
+        dateInput.value = planConfig.tripTime.startDate || 
+            today.toISOString().split('T')[0];
+    }
 
     dateInput.addEventListener('change', (e) => {
         updatePageForDate(e.target.value);
     });
 
-    updatePageForDate(defaultDate);
+    updatePageForDate(dateInput.value);
 }
 
-document.addEventListener('DOMContentLoaded', initializePage);
+async function handleFlightSelection(selectedDate, selectedTimeOption) {
+    const flights = await fetchFlightsForDate(selectedDate);
+    const timeOptions = Array.from(document.querySelectorAll('.time-option'));
+    const selectedIndex = timeOptions.indexOf(selectedTimeOption);
+    const selectedFlight = flights.data[selectedIndex];
+
+    if (!selectedFlight) {
+        throw new Error('Selected flight data not found');
+    }
+
+    // Clear existing tickets
+    planConfig.clearTickets(isReturnFlight ? 'inbound' : 'outbound');
+
+    // Add flight segments to planConfig
+    selectedFlight.flights.forEach(flight => {
+        const ticket = isReturnFlight ?
+            planConfig.addInboundTicket(
+                flight.departure.airport_code,
+                flight.arrival.airport_code,
+                flight.flight_code,
+                flight.departure.country === flight.arrival.country
+            ) :
+            planConfig.addOutboundTicket(
+                flight.departure.airport_code,
+                flight.arrival.airport_code,
+                flight.flight_code,
+                flight.departure.country === flight.arrival.country
+            );
+
+        ticket.date = new Date(flight.departure.time);
+        ticket.setClassAndPackage(flight.class_type, 'standard');
+
+        if (flight.extras) {
+            flight.extras.forEach(extra => ticket.addTravelExtra(extra));
+        }
+    });
+
+    // Update trip dates in planConfig
+    if (isReturnFlight) {
+        planConfig.tripTime.returnDate = selectedDate;
+    } else {
+        planConfig.tripTime.startDate = selectedDate;
+    }
+
+    planConfig.save();
+
+    // Store ticket details
+    const ticketDetails = {
+        date: selectedDate,
+        flights: selectedFlight.flights,
+        totalPrice: selectedFlight.total_price,
+        itinerary: {
+            departure: {
+                time: selectedFlight.flights[0].departure.time,
+                airport: selectedFlight.flights[0].departure.airport_code,
+                terminal: selectedFlight.flights[0].departure.terminal
+            },
+            arrival: {
+                time: selectedFlight.flights[selectedFlight.flights.length - 1].arrival.time,
+                airport: selectedFlight.flights[selectedFlight.flights.length - 1].arrival.airport_code,
+                terminal: selectedFlight.flights[selectedFlight.flights.length - 1].arrival.terminal
+            },
+            numberOfFlights: selectedFlight.flights.length
+        }
+    };
+
+    sessionStorage.setItem(
+        isReturnFlight ? 'selectedReturnTicket' : 'selectedDepartureTicket', 
+        JSON.stringify(ticketDetails)
+    );
+
+    return selectedFlight;
+}
 
 document.addEventListener('DOMContentLoaded', function() {
+    initializePage();
+
     const confirmButton = document.querySelector('.confirm-btn');
     
     confirmButton.addEventListener('click', async function() {
         const selectedDate = document.getElementById('flightDate').value;
         const selectedTimeOption = document.querySelector('.time-option.selected');
 
-        // Validate selections
-        if (!selectedDate) {
-            alert('Please select a flight date');
-            return;
-        }
-
-        if (!selectedTimeOption) {
-            alert('Please select a time slot');
+        if (!selectedDate || !selectedTimeOption) {
+            alert('Please select both a date and time slot');
             return;
         }
 
         try {
-            // Get the flights data for selected date
-            const flights = await fetchFlightsForDate(selectedDate);
-            
-            // Find the selected flight index
-            const timeOptions = Array.from(document.querySelectorAll('.time-option'));
-            const selectedIndex = timeOptions.indexOf(selectedTimeOption);
-            
-            // Get the selected flight data
-            const selectedFlight = flights.data[selectedIndex];
+            await handleFlightSelection(selectedDate, selectedTimeOption);
 
-            if (!selectedFlight) {
-                throw new Error('Selected flight data not found');
-            }
-
-            // Determine if this is an outbound or inbound flight based on the date
-            const tripStartDate = new Date(planConfig.tripTime.startDate);
-            const selectedFlightDate = new Date(selectedDate);
-            const isOutbound = selectedFlightDate.getTime() === tripStartDate.getTime();
-
-            // Clear existing tickets for this journey type
-            if (isOutbound) {
-                planConfig.clearTickets('outbound');
-            } else {
-                planConfig.clearTickets('inbound');
-            }
-
-            // Add each flight segment to planConfig
-            selectedFlight.flights.forEach(flight => {
-                const ticket = isOutbound ? 
-                    planConfig.addOutboundTicket(
-                        flight.departure.airport_code,
-                        flight.arrival.airport_code,
-                        flight.flight_code,
-                        flight.departure.country === flight.arrival.country // isDomestic
-                    ) :
-                    planConfig.addInboundTicket(
-                        flight.departure.airport_code,
-                        flight.arrival.airport_code,
-                        flight.flight_code,
-                        flight.departure.country === flight.arrival.country // isDomestic
-                    );
-
-                // Set additional ticket details
-                ticket.date = new Date(flight.departure.time);
-                ticket.setClassAndPackage(flight.class_type, 'standard'); // You can modify package type as needed
-
-                // Add any extras from the flight data
-                if (flight.extras) {
-                    flight.extras.forEach(extra => ticket.addTravelExtra(extra));
-                }
-            });
-
-            // Save the updated configuration
-            planConfig.save();
-
-            // Store essential details in session storage for immediate use
-            const ticketDetails = {
-                date: selectedDate,
-                flights: selectedFlight.flights,
-                totalPrice: selectedFlight.total_price,
-                itinerary: {
-                    departure: {
-                        time: selectedFlight.flights[0].departure.time,
-                        airport: selectedFlight.flights[0].departure.airport_code,
-                        terminal: selectedFlight.flights[0].departure.terminal
-                    },
-                    arrival: {
-                        time: selectedFlight.flights[selectedFlight.flights.length - 1].arrival.time,
-                        airport: selectedFlight.flights[selectedFlight.flights.length - 1].arrival.airport_code,
-                        terminal: selectedFlight.flights[selectedFlight.flights.length - 1].arrival.terminal
-                    },
-                    numberOfFlights: selectedFlight.flights.length
-                }
-            };
-
-            sessionStorage.setItem('selectedTicket', JSON.stringify(ticketDetails));
-
-            // Add loading animation
+            // Show loading animation
             const loadingContainer = document.createElement('div');
             loadingContainer.className = 'loading-container';
             loadingContainer.innerHTML = `
                 <div class="loading-text">
-                    Processing your selection<span class="dots">...</span>
+                    Processing your ${isReturnFlight ? 'return ' : ''}flight selection<span class="dots">...</span>
                 </div>
             `;
             document.body.appendChild(loadingContainer);
 
-            // Start dots animation
             const dotsInterval = animateDots();
 
-            // Determine next page based on whether this was outbound or return flight
-            const nextPage = isOutbound ? 'return-flight.html' : 'payment.html';
-
-            // Simulate processing time and redirect
+            // Redirect after processing
             setTimeout(() => {
                 clearInterval(dotsInterval);
                 loadingContainer.classList.add('fade-out');
                 
                 setTimeout(() => {
-                    window.location.href = nextPage;
+                    window.location.href = isReturnFlight ? 'payment.html' : 'returnTicketCheck.html';
                 }, 1000);
             }, 2000);
 
