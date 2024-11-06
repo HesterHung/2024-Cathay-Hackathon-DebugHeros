@@ -1,4 +1,5 @@
 import { planConfig } from "./planConfig";
+import { animateDots } from "./laodingTicket";
 
 let flightDatabase = {}
 
@@ -177,3 +178,132 @@ function initializePage() {
 }
 
 document.addEventListener('DOMContentLoaded', initializePage);
+
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmButton = document.querySelector('.confirm-btn');
+    
+    confirmButton.addEventListener('click', async function() {
+        const selectedDate = document.getElementById('flightDate').value;
+        const selectedTimeOption = document.querySelector('.time-option.selected');
+
+        // Validate selections
+        if (!selectedDate) {
+            alert('Please select a flight date');
+            return;
+        }
+
+        if (!selectedTimeOption) {
+            alert('Please select a time slot');
+            return;
+        }
+
+        try {
+            // Get the flights data for selected date
+            const flights = await fetchFlightsForDate(selectedDate);
+            
+            // Find the selected flight index
+            const timeOptions = Array.from(document.querySelectorAll('.time-option'));
+            const selectedIndex = timeOptions.indexOf(selectedTimeOption);
+            
+            // Get the selected flight data
+            const selectedFlight = flights.data[selectedIndex];
+
+            if (!selectedFlight) {
+                throw new Error('Selected flight data not found');
+            }
+
+            // Determine if this is an outbound or inbound flight based on the date
+            const tripStartDate = new Date(planConfig.tripTime.startDate);
+            const selectedFlightDate = new Date(selectedDate);
+            const isOutbound = selectedFlightDate.getTime() === tripStartDate.getTime();
+
+            // Clear existing tickets for this journey type
+            if (isOutbound) {
+                planConfig.clearTickets('outbound');
+            } else {
+                planConfig.clearTickets('inbound');
+            }
+
+            // Add each flight segment to planConfig
+            selectedFlight.flights.forEach(flight => {
+                const ticket = isOutbound ? 
+                    planConfig.addOutboundTicket(
+                        flight.departure.airport_code,
+                        flight.arrival.airport_code,
+                        flight.flight_code,
+                        flight.departure.country === flight.arrival.country // isDomestic
+                    ) :
+                    planConfig.addInboundTicket(
+                        flight.departure.airport_code,
+                        flight.arrival.airport_code,
+                        flight.flight_code,
+                        flight.departure.country === flight.arrival.country // isDomestic
+                    );
+
+                // Set additional ticket details
+                ticket.date = new Date(flight.departure.time);
+                ticket.setClassAndPackage(flight.class_type, 'standard'); // You can modify package type as needed
+
+                // Add any extras from the flight data
+                if (flight.extras) {
+                    flight.extras.forEach(extra => ticket.addTravelExtra(extra));
+                }
+            });
+
+            // Save the updated configuration
+            planConfig.save();
+
+            // Store essential details in session storage for immediate use
+            const ticketDetails = {
+                date: selectedDate,
+                flights: selectedFlight.flights,
+                totalPrice: selectedFlight.total_price,
+                itinerary: {
+                    departure: {
+                        time: selectedFlight.flights[0].departure.time,
+                        airport: selectedFlight.flights[0].departure.airport_code,
+                        terminal: selectedFlight.flights[0].departure.terminal
+                    },
+                    arrival: {
+                        time: selectedFlight.flights[selectedFlight.flights.length - 1].arrival.time,
+                        airport: selectedFlight.flights[selectedFlight.flights.length - 1].arrival.airport_code,
+                        terminal: selectedFlight.flights[selectedFlight.flights.length - 1].arrival.terminal
+                    },
+                    numberOfFlights: selectedFlight.flights.length
+                }
+            };
+
+            sessionStorage.setItem('selectedTicket', JSON.stringify(ticketDetails));
+
+            // Add loading animation
+            const loadingContainer = document.createElement('div');
+            loadingContainer.className = 'loading-container';
+            loadingContainer.innerHTML = `
+                <div class="loading-text">
+                    Processing your selection<span class="dots">...</span>
+                </div>
+            `;
+            document.body.appendChild(loadingContainer);
+
+            // Start dots animation
+            const dotsInterval = animateDots();
+
+            // Determine next page based on whether this was outbound or return flight
+            const nextPage = isOutbound ? 'return-flight.html' : 'payment.html';
+
+            // Simulate processing time and redirect
+            setTimeout(() => {
+                clearInterval(dotsInterval);
+                loadingContainer.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    window.location.href = nextPage;
+                }, 1000);
+            }, 2000);
+
+        } catch (error) {
+            console.error('Error processing flight selection:', error);
+            alert('There was an error processing your selection. Please try again.');
+        }
+    });
+});
