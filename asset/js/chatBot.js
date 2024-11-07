@@ -5,9 +5,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const typingIndicator = document.getElementById('typing-indicator');
     const errorMessage = document.getElementById('error-message');
 
-    // Replace with your actual API endpoint
-    const API_URL = 'YOUR_API_ENDPOINT';
-    const TIMEOUT_DURATION = 30000; // 30 seconds timeout
+    const API_URL = 'http://ec2-54-179-40-164.ap-southeast-1.compute.amazonaws.com:8000/chatbot_chatting/';
+    const TIMEOUT_DURATION = 30000;
+
+    // Clear any previous messages and typing indicator
+    typingIndicator.style.display = 'none';
+    messagesContainer.innerHTML = `
+        <div class="message bot-message">
+            <div class="message-content">
+                Hello! I'm your travel assistant. How can I help you plan your journey?
+            </div>
+            <div class="message-time">${getCurrentTime()}</div>
+        </div>
+    `;
 
     function showTypingIndicator() {
         typingIndicator.style.display = 'block';
@@ -22,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         errorMessage.style.display = 'block';
         setTimeout(() => {
             errorMessage.style.display = 'none';
-        }, 5000); // Hide error message after 5 seconds
+        }, 5000);
     }
 
     function getCurrentTime() {
@@ -50,6 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
     async function sendMessage() {
         const message = messageInput.value.trim();
         if (!message) return;
+
+        // Debug log
+        console.log('Sending message:', message);
 
         // Disable input and button while processing
         messageInput.disabled = true;
@@ -82,15 +95,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('Network response was not ok');
             }
 
-            const data = await response.json();
-            
+            // Get response as text instead of JSON
+            const responseText = await response.text();
+            console.log('Bot response:', responseText); // Debug log
+
             // Hide typing indicator
             hideTypingIndicator();
 
             // Add bot response to chat
-            addMessage(data.response, false);
+            addMessage(responseText, false);
 
         } catch (error) {
+            console.error('Error:', error); // Debug log
             hideTypingIndicator();
             
             if (error.name === 'AbortError') {
@@ -100,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             showErrorMessage();
-            console.error('Error:', error);
 
         } finally {
             // Re-enable input and button
@@ -119,29 +134,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Retry mechanism
-    let retryCount = 0;
-    const MAX_RETRIES = 3;
-
-    async function sendMessageWithRetry() {
-        for (let i = 0; i < MAX_RETRIES; i++) {
-            try {
-                await sendMessage();
-                retryCount = 0; // Reset retry count on success
-                return;
-            } catch (error) {
-                retryCount++;
-                if (retryCount >= MAX_RETRIES) {
-                    showErrorMessage();
-                    retryCount = 0; // Reset retry count
-                    throw error;
-                }
-                // Wait before retrying (exponential backoff)
-                await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
-            }
-        }
-    }
-
-    // Initialize chat
+    // Initialize focus
     messageInput.focus();
 });
