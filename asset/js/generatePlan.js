@@ -1,6 +1,8 @@
 // Sample data structure - in real application, this would come from an API
 // Add at the beginning of your file
 import CONFIG from "../config";
+import { planConfig } from "./planConfig";
+
 const API_CONFIG = {
     OPENTRIPMAP_KEY: '5ae2e3f221c38a28845f05b6628727068eb707c586acd059ef3fcf53',
     GOOGLE_MAPS_KEY: CONFIG.GOOGLE_MAPS_KEY,
@@ -163,8 +165,17 @@ const updatedPackageData = {
     ]
 };
 
-async function getActivitiesSuggestions(destination, limit = 10) {
+async function getActivitiesSuggestions(defaultDestination = 'Tokyo', limit = 5) {
     try {
+        // Get planConfig from localStorage
+        const storedPlanConfig = localStorage.getItem('planConfig');
+        const planConfigData = storedPlanConfig ? JSON.parse(storedPlanConfig) : {};
+
+        // Get destination from planConfig, fallback to default if not found
+        const destination = planConfigData?.location?.city || planConfigData?.location?.country || defaultDestination;
+
+        console.log('Sending destination to backend:', destination); // Debug log
+
         const response = await fetch('http://ec2-54-179-40-164.ap-southeast-1.compute.amazonaws.com:8000/ken_api/activity/', {
             method: 'POST',
             headers: {
@@ -179,7 +190,7 @@ async function getActivitiesSuggestions(destination, limit = 10) {
         if (!response.ok) {
             throw new Error('API request failed');
         }
-
+        console.log(planConfig)
         const data = await response.json();
         return Object.entries(data).map(([_, [name, type]]) => ({
             title: name,
@@ -197,19 +208,27 @@ class ItineraryManager {
         this.container = document.getElementById(containerId);
         this.data = this.ensureMinimumItems(data);
         this.draggedItem = null;
-        this.destination = 'Japan';
+        
+        // Get planConfig from localStorage
+        const storedPlanConfig = localStorage.getItem('planConfig');
+        const planConfigData = storedPlanConfig ? JSON.parse(storedPlanConfig) : {};
+        
+        // Set destination from localStorage planConfig
+        this.destination = planConfigData?.location?.city || planConfigData?.location?.country || 'Japan';
+        console.log('Using destination from localStorage:', this.destination); // Debug log
+        
         this.map = null;
         this.markers = [];
         this.loadGoogleMapsScript();
         this.init();
     }
-    
+
     loadGoogleMapsScript() {
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=${API_CONFIG.GOOGLE_MAPS_KEY}&callback=initMap`;
         script.async = true;
         script.defer = true;
-        
+
         // Define global callback
         window.initMap = () => {
             this.initMap();
@@ -220,7 +239,7 @@ class ItineraryManager {
 
     initMap() {
         if (!google) return; // Exit if Google Maps isn't loaded
-        
+
         // Center on Tokyo by default
         const tokyo = { lat: 35.6762, lng: 139.6503 };
         this.map = new google.maps.Map(document.getElementById('map'), {
@@ -233,8 +252,8 @@ class ItineraryManager {
         const geocoder = new google.maps.Geocoder();
         try {
             const result = await new Promise((resolve, reject) => {
-                geocoder.geocode({ 
-                    address: `${locationName}, ${this.destination}` 
+                geocoder.geocode({
+                    address: `${locationName}, ${this.destination}`
                 }, (results, status) => {
                     if (status === 'OK') {
                         resolve(results[0]);
@@ -453,27 +472,27 @@ class ItineraryManager {
         });
     }
 
-// Modify the existing handleLocationClick method
-async handleLocationClick(itemsContainer) {
-    const input = itemsContainer.closest('.time-section')
-        .querySelector('.custom-event-input input');
-    const locationName = input.value.trim();
-    
-    if (locationName) {
-        const result = await this.searchLocation(locationName);
-        if (result) {
-            this.addItemToContainer({
-                title: locationName,
-                type: 'event',
-                location: {
-                    lat: result.geometry.location.lat(),
-                    lng: result.geometry.location.lng()
-                }
-            }, itemsContainer);
-            input.value = '';
+    // Modify the existing handleLocationClick method
+    async handleLocationClick(itemsContainer) {
+        const input = itemsContainer.closest('.time-section')
+            .querySelector('.custom-event-input input');
+        const locationName = input.value.trim();
+
+        if (locationName) {
+            const result = await this.searchLocation(locationName);
+            if (result) {
+                this.addItemToContainer({
+                    title: locationName,
+                    type: 'event',
+                    location: {
+                        lat: result.geometry.location.lat(),
+                        lng: result.geometry.location.lng()
+                    }
+                }, itemsContainer);
+                input.value = '';
+            }
         }
     }
-}
 
     showSuggestionsPopup(suggestions, itemsContainer) {
         const popup = document.createElement('div');
