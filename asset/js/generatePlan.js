@@ -214,7 +214,7 @@ class ItineraryManager {
         const planConfigData = storedPlanConfig ? JSON.parse(storedPlanConfig) : {};
         
         // Set destination from localStorage planConfig
-        this.destination = planConfigData?.location?.city || planConfigData?.location?.country || 'Japan';
+        this.destination = planConfigData?.location?.city || planConfigData?.location?.country || 'Tokyo';
         console.log('Using destination from localStorage:', this.destination); // Debug log
         
         this.map = null;
@@ -239,6 +239,7 @@ class ItineraryManager {
 
     initMap() {
         if (!google) return; // Exit if Google Maps isn't loaded
+        window.googleMapsLoaded = true;
 
         // Center on Tokyo by default
         const tokyo = { lat: 35.6762, lng: 139.6503 };

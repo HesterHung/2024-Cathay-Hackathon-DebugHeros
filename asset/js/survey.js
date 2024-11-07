@@ -88,7 +88,7 @@ function createDataList() {
     }
     // 
 
-    const optionList = ["Hong Kong", "Japan"]; // Example option list
+    const optionList = ["Hong Kong", "Japan", "Tokyo"]; // Example option list
     dataListElement.innerHTML = ''; // Clear existing options
 
     // Populate the datalist with options

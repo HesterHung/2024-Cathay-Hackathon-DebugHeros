@@ -1,6 +1,6 @@
 // config.js or planConfig.js
 const CONFIG = {
-    GOOGLE_MAPS_KEY: 'AIzaSyBw5ARUwQ3H6_NKnFP2JENZMQ519SN0dp8'
+    GOOGLE_MAPS_KEY: 'AIzaSyClc9svc47iMOCEPPGiY8NBk_Pja1cEx7A'
     // other config variables...
 };
 
