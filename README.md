@@ -52,7 +52,6 @@ This was a collaborative hackathon project. Hester's primary contributions inclu
 - Planned the product demonstration, including the pitching script and demo flow to effectively communicate the user journey and technical solution
 - Collaborated with backend and AI teammates to deliver a functional prototype under hackathon constraints
 
----
 
 ## System Architecture (UML)
 
@@ -95,7 +94,6 @@ Figma Design:
 Figma Link:
 https://www.figma.com/design/Tdzm25g9quMFj3gOfWuDWU/cathay-hackathon-2024?node-id=0-1&t=kWpwySHzXFE4W0co-1
 
----
 
 ### Implementation (Frontend Screenshots)
 
