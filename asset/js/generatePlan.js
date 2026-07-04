@@ -4,7 +4,7 @@ import CONFIG from "../config";
 import { planConfig } from "./planConfig";
 
 const API_CONFIG = {
-    OPENTRIPMAP_KEY: '5ae2e3f221c38a28845f05b6628727068eb707c586acd059ef3fcf53',
+    OPENTRIPMAP_KEY: '5ae2e3f221c38a28845f05b67ca87429477a10a8468d1d017207f6b6', //openTripMap API key
     GOOGLE_MAPS_KEY: CONFIG.GOOGLE_MAPS_KEY,
 };
 
