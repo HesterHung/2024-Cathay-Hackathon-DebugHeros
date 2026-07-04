@@ -1,5 +1,8 @@
 # Cathay Hackathon 2024 — Smart Travel Planner
 
+> This project builds upon earlier concept exploration (2023), evolving into a full-stack AI-powered system design.
+
+
 ## Overview
 
 This project was built for the Cathay Hackathon 2024. It is a travel planning platform designed to simplify complex international travel by helping users generate complete, personalized itineraries in a few clicks.
@@ -7,6 +10,8 @@ This project was built for the Cathay Hackathon 2024. It is a travel planning pl
 The system addresses common pain points in multi-leg travel, including difficulty in searching flight information, managing transfers, and coordinating bookings across multiple services.
 
 The goal is to reduce planning friction and enable users to focus on travel decisions rather than logistics.
+
+>Due to hackathon time constraints, this project focuses on a functional prototype demonstrating core user flows and system design rather than a fully production-ready implementation.
 
 ---
 
@@ -28,12 +33,19 @@ As a result, users often spend significant time manually coordinating travel det
 
 This platform provides a unified travel planning experience where users can:
 
-* Generate a complete travel plan with a few clicks
+* Generate a complete travel plan with auto route with a few clicks
 * Explore destinations freely with automatically suggested transfer routes when Cathay flights are available
 * View and manage flight, hotel, and transport information in one system
 * Reduce manual planning effort through structured AI-assisted recommendations
 
 The system is designed to support both first-time travelers and Cathay loyalty members with tailored experiences.
+
+---
+
+## Pitching Video
+
+Watch our pitch:
+https://youtu.be/Cy4qAqxQ5l8
 
 ---
 
@@ -193,7 +205,7 @@ The goal of this project is to demonstrate the ability to:
 * Integrate AI into practical user workflows
 * Build a working prototype under time constraints
 
-Due to hackathon time constraints, this project focuses on a functional prototype demonstrating core user flows and system design rather than a fully production-ready implementation.
+> Again, due to hackathon time constraints, this project focuses on a functional prototype demonstrating core user flows and system design rather than a fully production-ready implementation.
 
 ---
 
