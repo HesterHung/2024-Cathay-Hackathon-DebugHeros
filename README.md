@@ -178,13 +178,7 @@ Screenshots:
 
 The system is built with a modular structure:
 
-Frontend (HTML/CSS/JS)
-↓
-Backend (Node.js API Layer)
-↓
-AI Service (Llama-based itinerary generation)
-↓
-SQL Database (trip + user data)
+Frontend (HTML/CSS/JS) -> Backend (Node.js API Layer) -> AI Service (Llama-based itinerary generation) -> SQL Database (trip + user data)
 
 This separation allows independent scaling of UI, logic, and AI processing components.
 
