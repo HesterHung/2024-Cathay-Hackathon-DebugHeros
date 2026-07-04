@@ -5,15 +5,10 @@
 
 ## Overview
 
-This project was built for the Cathay Hackathon 2024. It is a travel planning platform designed to simplify complex international travel by helping users generate complete, personalized itineraries in a few clicks.
-
-The system addresses common pain points in multi-leg travel, including difficulty in searching flight information, managing transfers, and coordinating bookings across multiple services.
-
-The goal is to reduce planning friction and enable users to focus on travel decisions rather than logistics.
+Built for Cathay Hackathon 2024, this project is an AI-assisted travel planning platform that helps users generate personalized multi-leg itineraries, manage transfers, and centralize travel bookings. It focuses on demonstrating product thinking, scalable system design, and AI integration under hackathon constraints.
 
 >Due to hackathon time constraints, this project focuses on a functional prototype demonstrating core user flows and system design rather than a fully production-ready implementation.
 
----
 
 ## Problem Statement
 
@@ -25,9 +20,8 @@ Modern travelers face multiple challenges when planning international trips:
 * Complexity in managing Cathay Pacific transfer flights and multi-leg journeys
 * Fragmentation of booking systems across flights, hotels, and transport services
 
-As a result, users often spend significant time manually coordinating travel details across multiple platforms.
 
----
+
 
 ## Solution
 
@@ -40,12 +34,23 @@ This platform provides a unified travel planning experience where users can:
 
 The system is designed to support both first-time travelers and Cathay loyalty members with tailored experiences.
 
----
 
 ## Pitching Video
-
 Watch our pitch:
 https://youtu.be/Cy4qAqxQ5l8
+
+
+## Hester's Contributions
+
+This was a collaborative hackathon project. Hester's primary contributions included:
+
+- Designed the overall system architecture (backend + frontend) with UML diagrams and Interaction Flow
+- Created the end-to-end user interaction flow and frontend state logic
+- Designed the complete UI/UX in Figma
+- Implemented the frontend using HTML, CSS Modules, and JavaScript
+- Integrated the frontend with backend APIs
+- Planned the product demonstration, including the pitching script and demo flow to effectively communicate the user journey and technical solution
+- Collaborated with backend and AI teammates to deliver a functional prototype under hackathon constraints
 
 ---
 
@@ -57,41 +62,6 @@ https://youtu.be/Cy4qAqxQ5l8
 
 <img src="images/user_flow.jpg" width="1200"/>
 
----
-## Key Features
-
-### Smart Travel Planning
-
-* AI-assisted generation of travel itineraries
-* Automatic handling of multi-leg and transfer flights
-* Simplified trip planning flow
-
-### Unified Booking Concept
-
-* Conceptual integration of flights, hotels, and transport into a single platform
-* Centralized trip management interface
-
-### Transfer Optimization
-
-* Guidance for transit stops and connection routes
-* Support for Cathay Pacific transfer flight scenarios
-
-### User Personalization
-
-* First-time users:
-
-  * Guidance for baggage handling and transit steps
-  * Simplified onboarding flow for travel planning
-
-* Cathay members:
-
-  * Incentive structure for earning additional Asia Miles through planned trips
-
-* All users:
-
-  * End-to-end trip planning in a single workflow
-
----
 
 ## UI/UX Design 
 
@@ -142,7 +112,6 @@ Screenshots:
 </div>
 
 
----
 
 ## Tech Stack
 
@@ -153,18 +122,10 @@ Screenshots:
 * Architecture: Separated frontend and backend for scalability
 * System design consideration: extensible architecture with potential for caching layer integration (future improvement)
 
----
 
-## System Design Highlights
 
-* Clear separation between frontend and backend services to improve maintainability and scalability
-* Backend designed to support AI-driven itinerary generation
-* Structured data model using SQL for travel plans and user information
-* Prepared architecture for future caching layer to optimize performance at scale
 
----
-
-## What I Learned
+## What We Learned
 
 * Translating real-world travel pain points into a structured product solution
 * Designing a system that combines AI-generated output with user-driven planning
@@ -174,7 +135,6 @@ Screenshots:
 * Working with constraints while maintaining a clean system design direction
 * Collaborating in a team environment to align design, frontend, backend, and AI components under tight time constraints
 
----
 
 ## Future Improvements
 
@@ -184,7 +144,6 @@ Screenshots:
 * Expansion of AI model for more accurate routing and recommendation
 * Mobile-first redesign for better usability
 
----
 
 ## Architecture Summary
 
@@ -194,7 +153,6 @@ Frontend (HTML/CSS/JS) -> Backend (Node.js API Layer) -> AI Service (Llama-based
 
 This separation allows independent scaling of UI, logic, and AI processing components.
 
----
 
 ## Project Goal
 
